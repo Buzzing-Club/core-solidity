@@ -85,6 +85,20 @@ export default {
     ...(process.env.KEY_GOERLI && { goerli }),
     ...(process.env.KEY_ETH && { eth }),
     // mainnet: bscMainnet,
+    sepolia: {
+      url: `https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      // url:"https://eth-sepolia.g.alchemy.com/v2/_fTGQUyv6-jeDLkyqbR-Jv3ljheDDTSE",
+      //url:"https://sepolia.infura.io/v3/45dc42dd02914322a6cf2a2f46359c5a",
+      accounts : [process.env.PRIVATE_KEY]
+    },
+    swelltestnet: {
+      url: `https://swell-testnet.alt.technology`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
+    swell: {
+      url: `https://rpc.ankr.com/swell`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY || '',

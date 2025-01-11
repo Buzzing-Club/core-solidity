@@ -3,7 +3,7 @@ pragma solidity >=0.5.0 <0.8.0;
 
 import '@pancakeswap/v3-core/contracts/libraries/FullMath.sol';
 import '@pancakeswap/v3-core/contracts/libraries/TickMath.sol';
-import '@pancakeswap/v3-core/contracts/interfaces/IPancakeV3Pool.sol';
+import '@pancakeswap/v3-core/contracts/interfaces/IBubblySwapPool.sol';
 
 /// @title Oracle library
 /// @notice Provides functions to integrate with V3 pool oracle
@@ -25,7 +25,7 @@ library OracleLibrary {
         secondsAgos[1] = 0;
 
         (int56[] memory tickCumulatives, uint160[] memory secondsPerLiquidityCumulativeX128s) =
-            IPancakeV3Pool(pool).observe(secondsAgos);
+            IBubblySwapPool(pool).observe(secondsAgos);
 
         int56 tickCumulativesDelta = tickCumulatives[1] - tickCumulatives[0];
         uint160 secondsPerLiquidityCumulativesDelta =
@@ -72,16 +72,16 @@ library OracleLibrary {
     /// @param pool Address of PancakeSwap V3 pool that we want to observe
     /// @return secondsAgo The number of seconds ago of the oldest observation stored for the pool
     function getOldestObservationSecondsAgo(address pool) internal view returns (uint32 secondsAgo) {
-        (, , uint16 observationIndex, uint16 observationCardinality, , , ) = IPancakeV3Pool(pool).slot0();
+        (, , uint16 observationIndex, uint16 observationCardinality, , , ) = IBubblySwapPool(pool).slot0();
         require(observationCardinality > 0, 'NI');
 
         (uint32 observationTimestamp, , , bool initialized) =
-            IPancakeV3Pool(pool).observations((observationIndex + 1) % observationCardinality);
+            IBubblySwapPool(pool).observations((observationIndex + 1) % observationCardinality);
 
         // The next index might not be initialized if the cardinality is in the process of increasing
         // In this case the oldest observation is always in index 0
         if (!initialized) {
-            (observationTimestamp, , , ) = IPancakeV3Pool(pool).observations(0);
+            (observationTimestamp, , , ) = IBubblySwapPool(pool).observations(0);
         }
 
         secondsAgo = uint32(block.timestamp) - observationTimestamp;
@@ -91,7 +91,7 @@ library OracleLibrary {
     /// @param pool Address of PancakeSwap V3 pool
     /// @return The tick that the pool was in at the start of the current block
     function getBlockStartingTickAndLiquidity(address pool) internal view returns (int24, uint128) {
-        (, int24 tick, uint16 observationIndex, uint16 observationCardinality, , , ) = IPancakeV3Pool(pool).slot0();
+        (, int24 tick, uint16 observationIndex, uint16 observationCardinality, , , ) = IBubblySwapPool(pool).slot0();
 
         // 2 observations are needed to reliably calculate the block starting tick
         require(observationCardinality > 1, 'NEO');
@@ -100,9 +100,9 @@ library OracleLibrary {
         // therefore the tick in `slot0` is the same as at the beginning of the current block.
         // We don't need to check if this observation is initialized - it is guaranteed to be.
         (uint32 observationTimestamp, int56 tickCumulative, uint160 secondsPerLiquidityCumulativeX128, ) =
-            IPancakeV3Pool(pool).observations(observationIndex);
+            IBubblySwapPool(pool).observations(observationIndex);
         if (observationTimestamp != uint32(block.timestamp)) {
-            return (tick, IPancakeV3Pool(pool).liquidity());
+            return (tick, IBubblySwapPool(pool).liquidity());
         }
 
         uint256 prevIndex = (uint256(observationIndex) + observationCardinality - 1) % observationCardinality;
@@ -111,7 +111,7 @@ library OracleLibrary {
             int56 prevTickCumulative,
             uint160 prevSecondsPerLiquidityCumulativeX128,
             bool prevInitialized
-        ) = IPancakeV3Pool(pool).observations(prevIndex);
+        ) = IBubblySwapPool(pool).observations(prevIndex);
 
         require(prevInitialized, 'ONI');
 

@@ -49,11 +49,11 @@ async function main() {
   const provider = waffle.provider;
   console.log("owner", owner.address);
 
-  const pancakeV3PoolDeployer_address = '0xB0edb49557c583290368e04FffaBb293FC224Ae1';
-  const pancakeV3Factory_address = '0xC200B8E8eE9A4BFd22a2F31a3a64e581A3c9e793';
+  const BubblySwapPoolDeployer_address = '0xb10CF35b3A21CF8dA8CC9a8f3135Af8da10AB2DA';
+  const BubblySwapFactory_address = '0x6F42d306d615A523c82CE1546256242e558fdBc7';
 
   const SwapRouter = new ContractFactory(artifacts.SwapRouter.abi, artifacts.SwapRouter.bytecode, owner);
-  const swapRouter = await SwapRouter.deploy(pancakeV3PoolDeployer_address, pancakeV3Factory_address, WBNB);
+  const swapRouter = await SwapRouter.deploy(BubblySwapPoolDeployer_address, BubblySwapFactory_address, WBNB);
   console.log("swapRouter", swapRouter.address);
 
   const NFTDescriptor = new ContractFactory(artifacts.NFTDescriptor.abi, artifacts.NFTDescriptor.bytecode, owner);
@@ -105,8 +105,8 @@ async function main() {
     owner
   );
   const nonfungiblePositionManager = await NonfungiblePositionManager.deploy(
-    pancakeV3PoolDeployer_address,
-    pancakeV3Factory_address,
+    BubblySwapPoolDeployer_address,
+    BubblySwapFactory_address,
     WBNB,
     nonfungibleTokenPositionDescriptor.address
   );

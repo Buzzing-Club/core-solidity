@@ -2,7 +2,7 @@
 pragma solidity >=0.7.0;
 pragma abicoder v2;
 
-import '@pancakeswap/v3-core/contracts/interfaces/IPancakeV3Pool.sol';
+import '@pancakeswap/v3-core/contracts/interfaces/IBubblySwapPool.sol';
 import '@pancakeswap/v3-core/contracts/libraries/TickMath.sol';
 import '@pancakeswap/v3-core/contracts/libraries/BitMath.sol';
 import '@pancakeswap/v3-core/contracts/libraries/FullMath.sol';

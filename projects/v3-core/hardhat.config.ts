@@ -28,7 +28,7 @@ const LOWEST_OPTIMIZER_COMPILER_SETTINGS = {
     evmVersion: 'istanbul',
     optimizer: {
       enabled: true,
-      runs: 400,
+      runs: 10,
     },
     metadata: {
       bytecodeHash: 'none',
@@ -84,6 +84,16 @@ export default {
     ...(process.env.KEY_GOERLI && { goerli }),
     ...(process.env.KEY_ETH && { eth }),
     // mainnet: bscMainnet,
+    sepolia: {
+      url: `https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      // url:"https://eth-sepolia.g.alchemy.com/v2/_fTGQUyv6-jeDLkyqbR-Jv3ljheDDTSE",
+      //url:"https://sepolia.infura.io/v3/45dc42dd02914322a6cf2a2f46359c5a",
+      accounts : [process.env.PRIVATE_KEY]
+    },
+    swelltestnet: {
+      url: `https://swell-testnet.alt.technology`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
@@ -91,8 +101,8 @@ export default {
   solidity: {
     compilers: [DEFAULT_COMPILER_SETTINGS],
     overrides: {
-      'contracts/PancakeV3Pool.sol': LOWEST_OPTIMIZER_COMPILER_SETTINGS,
-      'contracts/PancakeV3PoolDeployer.sol': LOWEST_OPTIMIZER_COMPILER_SETTINGS,
+      'contracts/BubblySwapPool.sol': LOWEST_OPTIMIZER_COMPILER_SETTINGS,
+      'contracts/BubblySwapPoolDeployer.sol': LOWEST_OPTIMIZER_COMPILER_SETTINGS,
       'contracts/test/OutputCodeHash.sol': LOWEST_OPTIMIZER_COMPILER_SETTINGS,
     },
   },

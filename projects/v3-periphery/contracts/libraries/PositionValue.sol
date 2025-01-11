@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.6.8 <0.8.0;
 
-import '@pancakeswap/v3-core/contracts/interfaces/IPancakeV3Pool.sol';
+import '@pancakeswap/v3-core/contracts/interfaces/IBubblySwapPool.sol';
 import '@pancakeswap/v3-core/contracts/libraries/FixedPoint128.sol';
 import '@pancakeswap/v3-core/contracts/libraries/TickMath.sol';
 import '@pancakeswap/v3-core/contracts/libraries/Tick.sol';
@@ -115,7 +115,7 @@ library PositionValue {
     {
         (uint256 poolFeeGrowthInside0LastX128, uint256 poolFeeGrowthInside1LastX128) =
             _getFeeGrowthInside(
-                IPancakeV3Pool(
+                IBubblySwapPool(
                     PoolAddress.computeAddress(
                         positionManager.deployer(),
                         PoolAddress.PoolKey({token0: feeParams.token0, token1: feeParams.token1, fee: feeParams.fee})
@@ -143,7 +143,7 @@ library PositionValue {
     }
 
     function _getFeeGrowthInside(
-        IPancakeV3Pool pool,
+        IBubblySwapPool pool,
         int24 tickLower,
         int24 tickUpper
     ) private view returns (uint256 feeGrowthInside0X128, uint256 feeGrowthInside1X128) {

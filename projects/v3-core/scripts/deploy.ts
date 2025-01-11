@@ -6,59 +6,60 @@ import fs from 'fs'
 type ContractJson = { abi: any; bytecode: string }
 const artifacts: { [name: string]: ContractJson } = {
   // eslint-disable-next-line global-require
-  PancakeV3PoolDeployer: require('../artifacts/contracts/PancakeV3PoolDeployer.sol/PancakeV3PoolDeployer.json'),
+  BubblySwapPoolDeployer: require('../artifacts/contracts/BubblySwapPoolDeployer.sol/BubblySwapPoolDeployer.json'),
   // eslint-disable-next-line global-require
-  PancakeV3Factory: require('../artifacts/contracts/PancakeV3Factory.sol/PancakeV3Factory.json'),
+  BubblySwapFactory: require('../artifacts/contracts/BubblySwapFactory.sol/BubblySwapFactory.json'),
 }
 
 async function main() {
   const [owner] = await ethers.getSigners()
-  const networkName = network.name
+  // const networkName = network.name
+  const networkName = "swelltestnet"
   console.log('owner', owner.address)
 
-  let pancakeV3PoolDeployer_address = ''
-  let pancakeV3PoolDeployer
-  const PancakeV3PoolDeployer = new ContractFactory(
-    artifacts.PancakeV3PoolDeployer.abi,
-    artifacts.PancakeV3PoolDeployer.bytecode,
+  let bubblySwapPoolDeployer_address = ''
+  let bubblySwapPoolDeployer
+  const BubblySwapPoolDeployer = new ContractFactory(
+    artifacts.BubblySwapPoolDeployer.abi,
+    artifacts.BubblySwapPoolDeployer.bytecode,
     owner
   )
-  if (!pancakeV3PoolDeployer_address) {
-    pancakeV3PoolDeployer = await PancakeV3PoolDeployer.deploy()
+  if (!bubblySwapPoolDeployer_address) {
+    bubblySwapPoolDeployer = await BubblySwapPoolDeployer.deploy()
 
-    pancakeV3PoolDeployer_address = pancakeV3PoolDeployer.address
-    console.log('pancakeV3PoolDeployer', pancakeV3PoolDeployer_address)
+    bubblySwapPoolDeployer_address = bubblySwapPoolDeployer.address
+    console.log('bubblySwapPoolDeployer', bubblySwapPoolDeployer_address)
   } else {
-    pancakeV3PoolDeployer = new ethers.Contract(
-      pancakeV3PoolDeployer_address,
-      artifacts.PancakeV3PoolDeployer.abi,
+    bubblySwapPoolDeployer = new ethers.Contract(
+      bubblySwapPoolDeployer_address,
+      artifacts.BubblySwapPoolDeployer.abi,
       owner
     )
   }
 
-  let pancakeV3Factory_address = ''
-  let pancakeV3Factory
-  if (!pancakeV3Factory_address) {
-    const PancakeV3Factory = new ContractFactory(
-      artifacts.PancakeV3Factory.abi,
-      artifacts.PancakeV3Factory.bytecode,
+  let bubblySwapFactory_address = ''
+  let bubblySwapFactory
+  if (!bubblySwapFactory_address) {
+    const BubblySwapFactory = new ContractFactory(
+      artifacts.BubblySwapFactory.abi,
+      artifacts.BubblySwapFactory.bytecode,
       owner
     )
-    pancakeV3Factory = await PancakeV3Factory.deploy(pancakeV3PoolDeployer_address)
+    bubblySwapFactory = await BubblySwapFactory.deploy(bubblySwapPoolDeployer_address)
 
-    pancakeV3Factory_address = pancakeV3Factory.address
-    console.log('pancakeV3Factory', pancakeV3Factory_address)
+    bubblySwapFactory_address = bubblySwapFactory.address
+    console.log('bubblySwapFactory', bubblySwapFactory_address)
   } else {
-    pancakeV3Factory = new ethers.Contract(pancakeV3Factory_address, artifacts.PancakeV3Factory.abi, owner)
+    bubblySwapFactory = new ethers.Contract(bubblySwapFactory_address, artifacts.BubblySwapFactory.abi, owner)
   }
 
-  // Set FactoryAddress for pancakeV3PoolDeployer.
-  await pancakeV3PoolDeployer.setFactoryAddress(pancakeV3Factory_address);
+  // Set FactoryAddress for bubblySwapPoolDeployer.
+  await bubblySwapPoolDeployer.setFactoryAddress(bubblySwapFactory_address);
 
 
   const contracts = {
-    PancakeV3Factory: pancakeV3Factory_address,
-    PancakeV3PoolDeployer: pancakeV3PoolDeployer_address,
+    BubblySwapFactory: bubblySwapFactory_address,
+    BubblySwapPoolDeployer: bubblySwapPoolDeployer_address,
   }
 
   fs.writeFileSync(`./deployments/${networkName}.json`, JSON.stringify(contracts, null, 2))

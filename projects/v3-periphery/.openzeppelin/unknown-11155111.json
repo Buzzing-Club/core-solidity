@@ -1,0 +1,69 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x1eE8B2943948560EeEADC083DBdE0Bb27624B5e9",
+    "txHash": "0x860ba4352e86511a5d89b2109ac1bdd750a9dcd9b16fa17798d13f633b135e6f"
+  },
+  "proxies": [
+    {
+      "address": "0xc27dcA6847A9E5C91360f8647Cc7B6b372630076",
+      "txHash": "0xb982f6e2f9a66acaf441390e3aea38235d728a7aef28e2d9baac381634cba59b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x954974a93aA006c4ff6E7E3Da491efBDf778A19c",
+      "txHash": "0x83e68974763610f4fd92a5e10a27dd974fd9c83bc063d7a3ac1ae2d14e4ee5cd",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x71f81fB02f1E4A31EDAb6a80dFc85Ca4e54e2Ac2",
+      "txHash": "0x9d55a67b498ac498df9d6eac5d88ec6730f5b362de9969f29d339c3374465797",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "2a88f0a49a9c25b1c479a31be14897cf1d01115d45ba4287ded3734b5bb356e7": {
+      "address": "0x2f6943b99DfDB7867655aD7b16e1a9E8666f79Fb",
+      "txHash": "0xca86d72903b5f2a1fb1b5c704f628eb2c5b66c3b648360e881c1c9273568b995",
+      "layout": {
+        "solcVersion": "0.7.6",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\Initializable.sol:25"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\Initializable.sol:30"
+          },
+          {
+            "label": "_baseTokenURI",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage",
+            "contract": "NonfungibleTokenPositionDescriptorOffChain",
+            "src": "contracts\\NonfungibleTokenPositionDescriptorOffChain.sol:14"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    }
+  }
+}

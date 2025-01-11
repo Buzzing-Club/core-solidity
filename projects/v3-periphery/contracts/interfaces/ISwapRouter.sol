@@ -2,11 +2,11 @@
 pragma solidity >=0.7.5;
 pragma abicoder v2;
 
-import '@pancakeswap/v3-core/contracts/interfaces/callback/IPancakeV3SwapCallback.sol';
+import '@pancakeswap/v3-core/contracts/interfaces/callback/IBubblySwapSwapCallback.sol';
 
 /// @title Router token swapping functionality
 /// @notice Functions for swapping tokens via PancakeSwap V3
-interface ISwapRouter is IPancakeV3SwapCallback {
+interface ISwapRouter is IBubblySwapSwapCallback {
     struct ExactInputSingleParams {
         address tokenIn;
         address tokenOut;

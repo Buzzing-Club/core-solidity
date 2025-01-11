@@ -11,7 +11,7 @@ const artifacts: { [name: string]: ContractJson } = {
   QuoterV2: require('../artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json'),
   TickLens: require('../artifacts/contracts/lens/TickLens.sol/TickLens.json'),
   V3Migrator: require('../artifacts/contracts/V3Migrator.sol/V3Migrator.json'),
-  PancakeInterfaceMulticall: require('../artifacts/contracts/lens/PancakeInterfaceMulticall.sol/PancakeInterfaceMulticall.json'),
+  BubblyInterfaceMulticall: require('../artifacts/contracts/lens/BubblyInterfaceMulticall.sol/BubblyInterfaceMulticall.json'),
   // eslint-disable-next-line global-require
   SwapRouter: require('../artifacts/contracts/SwapRouter.sol/SwapRouter.json'),
   // eslint-disable-next-line global-require
@@ -53,7 +53,8 @@ function asciiStringToBytes32(str: string): string {
 
 async function main() {
   const [owner] = await ethers.getSigners()
-  const networkName = network.name
+  // const networkName = network.name
+  const networkName = "swelltestnet"
   console.log('owner', owner.address)
 
   const config = configs[networkName as keyof typeof configs]
@@ -64,13 +65,13 @@ async function main() {
 
   const deployedContracts = await import(`@pancakeswap/v3-core/deployments/${networkName}.json`)
 
-  const pancakeV3PoolDeployer_address = deployedContracts.PancakeV3PoolDeployer
-  const pancakeV3Factory_address = deployedContracts.PancakeV3Factory
+  const BubblySwapPoolDeployer_address = deployedContracts.BubblySwapPoolDeployer
+  const BubblySwapFactory_address = deployedContracts.BubblySwapFactory
 
   const SwapRouter = new ContractFactory(artifacts.SwapRouter.abi, artifacts.SwapRouter.bytecode, owner)
-  const swapRouter = await SwapRouter.deploy(pancakeV3PoolDeployer_address, pancakeV3Factory_address, config.WNATIVE)
+  const swapRouter = await SwapRouter.deploy(BubblySwapPoolDeployer_address, BubblySwapFactory_address, config.WNATIVE)
 
-  // await tryVerify(swapRouter, [pancakeV3PoolDeployer_address, pancakeV3Factory_address, config.WNATIVE])
+  // await tryVerify(swapRouter, [BubblySwapPoolDeployer_address, BubblySwapFactory_address, config.WNATIVE])
   console.log('swapRouter', swapRouter.address)
 
   // const NFTDescriptor = new ContractFactory(artifacts.NFTDescriptor.abi, artifacts.NFTDescriptor.bytecode, owner)
@@ -126,7 +127,7 @@ async function main() {
     artifacts.NonfungibleTokenPositionDescriptorOffChain.bytecode,
     owner
   )
-  const baseTokenUri = 'https://nft.pancakeswap.com/v3/'
+  const baseTokenUri = 'https://nft.bubbly.com/v3/'
   const nonfungibleTokenPositionDescriptor = await upgrades.deployProxy(NonfungibleTokenPositionDescriptor, [
     baseTokenUri,
   ])
@@ -141,43 +142,43 @@ async function main() {
     owner
   )
   const nonfungiblePositionManager = await NonfungiblePositionManager.deploy(
-    pancakeV3PoolDeployer_address,
-    pancakeV3Factory_address,
+    BubblySwapPoolDeployer_address,
+    BubblySwapFactory_address,
     config.WNATIVE,
     nonfungibleTokenPositionDescriptor.address
   )
 
   // await tryVerify(nonfungiblePositionManager, [
-  //   pancakeV3PoolDeployer_address,
-  //   pancakeV3Factory_address,
+  //   BubblySwapPoolDeployer_address,
+  //   BubblySwapFactory_address,
   //   config.WNATIVE,
   //   nonfungibleTokenPositionDescriptor.address,
   // ])
   console.log('nonfungiblePositionManager', nonfungiblePositionManager.address)
 
-  const PancakeInterfaceMulticall = new ContractFactory(
-    artifacts.PancakeInterfaceMulticall.abi,
-    artifacts.PancakeInterfaceMulticall.bytecode,
+  const BubblyInterfaceMulticall = new ContractFactory(
+    artifacts.BubblyInterfaceMulticall.abi,
+    artifacts.BubblyInterfaceMulticall.bytecode,
     owner
   )
 
-  const pancakeInterfaceMulticall = await PancakeInterfaceMulticall.deploy()
-  console.log('PancakeInterfaceMulticall', pancakeInterfaceMulticall.address)
+  const bubblyInterfaceMulticall = await BubblyInterfaceMulticall.deploy()
+  console.log('BubblyInterfaceMulticall', bubblyInterfaceMulticall.address)
 
-  // await tryVerify(pancakeInterfaceMulticall)
+  // await tryVerify(BubblyInterfaceMulticall)
 
   const V3Migrator = new ContractFactory(artifacts.V3Migrator.abi, artifacts.V3Migrator.bytecode, owner)
   const v3Migrator = await V3Migrator.deploy(
-    pancakeV3PoolDeployer_address,
-    pancakeV3Factory_address,
+    BubblySwapPoolDeployer_address,
+    BubblySwapFactory_address,
     config.WNATIVE,
     nonfungiblePositionManager.address
   )
   console.log('V3Migrator', v3Migrator.address)
 
   // await tryVerify(v3Migrator, [
-  //   pancakeV3PoolDeployer_address,
-  //   pancakeV3Factory_address,
+  //   BubblySwapPoolDeployer_address,
+  //   BubblySwapFactory_address,
   //   config.WNATIVE,
   //   nonfungiblePositionManager.address,
   // ])
@@ -189,10 +190,10 @@ async function main() {
   // await tryVerify(tickLens)
 
   const QuoterV2 = new ContractFactory(artifacts.QuoterV2.abi, artifacts.QuoterV2.bytecode, owner)
-  const quoterV2 = await QuoterV2.deploy(pancakeV3PoolDeployer_address, pancakeV3Factory_address, config.WNATIVE)
+  const quoterV2 = await QuoterV2.deploy(BubblySwapPoolDeployer_address, BubblySwapFactory_address, config.WNATIVE)
   console.log('QuoterV2', quoterV2.address)
 
-  // await tryVerify(quoterV2, [pancakeV3PoolDeployer_address, pancakeV3Factory_address, config.WNATIVE])
+  // await tryVerify(quoterV2, [BubblySwapPoolDeployer_address, BubblySwapFactory_address, config.WNATIVE])
 
   const contracts = {
     SwapRouter: swapRouter.address,
@@ -203,7 +204,7 @@ async function main() {
     // NFTDescriptorEx: nftDescriptorEx.address,
     NonfungibleTokenPositionDescriptor: nonfungibleTokenPositionDescriptor.address,
     NonfungiblePositionManager: nonfungiblePositionManager.address,
-    PancakeInterfaceMulticall: pancakeInterfaceMulticall.address,
+    BubblyInterfaceMulticall: bubblyInterfaceMulticall.address,
   }
 
   fs.writeFileSync(`./deployments/${networkName}.json`, JSON.stringify(contracts, null, 2))
