@@ -53,9 +53,10 @@ function asciiStringToBytes32(str: string): string {
 
 async function main() {
   const [owner] = await ethers.getSigners()
-  // const networkName = network.name
-  const networkName = "swelltestnet"
+  const networkName = network.name
+  // const networkName = "swelltestnet"
   console.log('owner', owner.address)
+  console.log('networkName',networkName)
 
   const config = configs[networkName as keyof typeof configs]
 

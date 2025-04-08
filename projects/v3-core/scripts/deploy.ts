@@ -13,8 +13,8 @@ const artifacts: { [name: string]: ContractJson } = {
 
 async function main() {
   const [owner] = await ethers.getSigners()
-  // const networkName = network.name
-  const networkName = "swelltestnet"
+  const networkName = network.name
+  // const networkName = "swelltestnet"
   console.log('owner', owner.address)
 
   let bubblySwapPoolDeployer_address = ''

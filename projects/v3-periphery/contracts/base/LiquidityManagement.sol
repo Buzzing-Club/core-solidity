@@ -12,7 +12,7 @@ import '../libraries/LiquidityAmounts.sol';
 
 import './PeripheryPayments.sol';
 import './PeripheryImmutableState.sol';
-
+import 'hardhat/console.sol';
 /// @title Liquidity management functions
 /// @notice Internal functions for safely managing liquidity in PancakeSwap V3
 abstract contract LiquidityManagement is IBubblySwapMintCallback, PeripheryImmutableState, PeripheryPayments {

@@ -1,4 +1,7 @@
 {
   "PancakeV3Factory": "0x5c9e40c6b7CC71035083b1FaEaC59bD7dF0bB417",
-  "PancakeV3PoolDeployer": "0x49CBD6eeffD36B9C573E357bad685e01C640DE24"
+  "PancakeV3PoolDeployer": "0x49CBD6eeffD36B9C573E357bad685e01C640DE24",
+  "BubblySwapFactory": "0x7fe33Cbfa1C1D5238061Fb83b079f6879A2C3C9c",
+  "BubblySwapPoolDeployer": "0xBA28f7ae733538fDbecf8256053D1e26e7503146"
+  
 }

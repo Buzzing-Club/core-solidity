@@ -15,3 +15,10 @@ bytecode
 dist
 projects/masterchef-v3/abi/@openzeppelin/contracts/access/Ownable.sol/Ownable.json
 projects/router/test/debug.ts
+# Ignore .json, .py, .js files directly under scripts/
+projects/v3-periphery/scripts/*.json
+projects/v3-periphery/scripts/*.py
+projects/v3-periphery/scripts/*.js
+
+# Ignore all folders (and their contents) inside scripts/
+projects/v3-periphery/scripts/*/

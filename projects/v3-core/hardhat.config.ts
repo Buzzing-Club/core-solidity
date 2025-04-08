@@ -94,6 +94,14 @@ export default {
       url: `https://swell-testnet.alt.technology`,
       accounts : [process.env.PRIVATE_KEY]
     },
+    injectivetestnet: {
+      url: `https://k8s.testnet.evmix.json-rpc.injective.network`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
+    basetestnet: {
+      url: `https://base-sepolia-rpc.publicnode.com`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,

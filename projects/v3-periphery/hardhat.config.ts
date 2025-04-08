@@ -51,6 +51,37 @@ const DEFAULT_COMPILER_SETTINGS = {
   },
 }
 
+const CTF_COMPILER_SETTINGS = {
+  version: '0.5.17',
+  settings: {
+    evmVersion: 'istanbul',
+    optimizer: {
+      enabled: true,
+      runs: 200,
+    },
+  },
+}
+const USDC_COMPILER_SETTINGS = {
+  version: '0.8.0',
+  settings: {
+    evmVersion: 'istanbul',
+    optimizer: {
+      enabled: true,
+      runs: 200,
+    },
+  },
+}
+const ERC1155Factory_COMPILER_SETTINGS = {
+  version: '0.6.12',
+  settings: {
+    evmVersion: 'istanbul',
+    optimizer: {
+      enabled: true,
+      runs: 200,
+    },
+  },
+}
+
 const bscTestnet: NetworkUserConfig = {
   url: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
   chainId: 97,
@@ -99,7 +130,25 @@ export default {
       url: `https://rpc.ankr.com/swell`,
       accounts : [process.env.PRIVATE_KEY]
     },
+    injectivetestnet: {
+      url: `https://k8s.testnet.evmix.json-rpc.injective.network`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
+    polygan: {
+      url: `https://polygon-mainnet.g.alchemy.com/v2/_fTGQUyv6-jeDLkyqbR-Jv3ljheDDTSE`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
+    
+    polygon: {
+      url: `https://polygon.blockpi.network/v1/rpc/3c42c659e6f2069a718f2ca2b500d1e77cf103b5`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
+    basetestnet: {
+      url: `https://base-sepolia-rpc.publicnode.com`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
   },
+
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY || '',
   },
@@ -112,6 +161,9 @@ export default {
       'contracts/NFTDescriptorEx.sol': LOWEST_OPTIMIZER_COMPILER_SETTINGS,
       'contracts/NonfungibleTokenPositionDescriptor.sol': LOWEST_OPTIMIZER_COMPILER_SETTINGS,
       'contracts/libraries/NFTDescriptor.sol': LOWEST_OPTIMIZER_COMPILER_SETTINGS,
+      'contracts/ctf.sol': CTF_COMPILER_SETTINGS,
+      'contracts/USDC.sol': USDC_COMPILER_SETTINGS,
+      'contracts/ERC1155Factory.sol': ERC1155Factory_COMPILER_SETTINGS
     },
   },
   watcher: {
