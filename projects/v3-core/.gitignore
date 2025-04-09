@@ -1,7 +1,5 @@
-artifacts/
+
 cache/
 crytic-export/
 node_modules/
 typechain/
-!artifacts/contracts/
-!artifacts/contracts/**

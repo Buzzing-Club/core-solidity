@@ -1,0 +1,110 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "CTF",
+  "sourceName": "contracts/vault.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "collateralToken",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "parentCollectionId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "conditionId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "partition",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "mergePositions",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "safeTransferFrom",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "collateralToken",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "parentCollectionId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "conditionId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "partition",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "splitPosition",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,0 +1,34 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IBubblySwapFlashCallback",
+  "sourceName": "contracts/interfaces/callback/IBubblySwapFlashCallback.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "fee0",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "fee1",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "BubblySwapFlashCallback",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
