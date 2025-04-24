@@ -147,6 +147,10 @@ export default {
       url: `https://base-sepolia-rpc.publicnode.com`,
       accounts : [process.env.PRIVATE_KEY]
     },
+    bsctestnet: {
+      url: `https://bsc-testnet.public.blastapi.io`,
+      accounts : [process.env.PRIVATE_KEY]
+    },
   },
 
   etherscan: {

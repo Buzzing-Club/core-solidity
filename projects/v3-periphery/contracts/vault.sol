@@ -129,7 +129,16 @@ contract Vault is PeripheryValidation,ERC1155Receiver,ERC20{
     function mint(uint256 amount) external{
         _mint(msg.sender,amount);
     }
-    // 存入USDC并开始生息
+   
+    function traderDeposit(uint256 amount) external {
+        usdc.transferFrom(msg.sender, address(this), amount);
+        //mint for swap
+        _mint(msg.sender,amount);        
+    }
+    function traderWithdraw(uint256 amount) external {
+        _burn(msg.sender,amount);
+        usdc.transfer(msg.sender,amount);      
+    }
     function deposit(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0");
 
@@ -245,7 +254,10 @@ contract Vault is PeripheryValidation,ERC1155Receiver,ERC20{
             uint256 amount1
         )
     {
-
+        //udsc-> usdb -> approve to ctf
+        //get erc1155 from ctf contract 
+        //IERC20(splitPositionParmas.collateralToken).transferFrom(msg.sender, address(this), splitPositionParmas.amount);
+        //require(mintParams.amount0Desired + mintParams.amount1Desired <= totalInterest, "no enough Interest");
         IERC20(splitPositionParmas.collateralToken).approve(ctfAddress, type(uint256).max);
         
         CTF(ctfAddress).splitPosition(splitPositionParmas.collateralToken, 
@@ -297,8 +309,8 @@ contract Vault is PeripheryValidation,ERC1155Receiver,ERC20{
         require(params.tokenIn != usdbTokenAddress);
         IERC20(params.tokenIn).approve(SwapRouter,type(uint256).max);
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
-        //_traderWithdraw(msg.sender, amountOut);
-        transfer(msg.sender,amountOut);
+        _traderWithdraw(msg.sender, amountOut);
+        //todo event trigger 
         emit SellYes(params.amountIn, amountOut, pool);
     }
 
@@ -310,7 +322,8 @@ contract Vault is PeripheryValidation,ERC1155Receiver,ERC20{
                    address pool) 
                    external 
     {
-
+        //transfer usdc for usdb
+        usdc.transferFrom(msg.sender, address(this), params.amountIn);
         //mint usdb for ctf
         _traderDeposit(address(this), params.amountIn);
         //tokenIn always usd
@@ -340,9 +353,8 @@ contract Vault is PeripheryValidation,ERC1155Receiver,ERC20{
         IERC20(wrappedERC1155Adress).approve(SwapRouter,type(uint256).max);
 
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
-        //_traderWithdraw(msg.sender, amountOut);
-        transfer(msg.sender, params.amountIn - amountOut);
-        
+        _traderWithdraw(msg.sender, amountOut);
+        //todo event trigger 
         emit BuyNo(params.amountIn, amountOut, pool);
     }
 
@@ -354,7 +366,8 @@ contract Vault is PeripheryValidation,ERC1155Receiver,ERC20{
                     address pool) external 
     {
         //buy yes && mergeposition to collateral
-
+        //transfer usdc for usdb
+        usdc.transferFrom(msg.sender, address(this), params.amountOut);
         //mint usdb for ctf
         _traderDeposit(address(this), params.amountOut);
         require(params.tokenIn == usdbTokenAddress);
@@ -374,8 +387,7 @@ contract Vault is PeripheryValidation,ERC1155Receiver,ERC20{
                                       splitPositionParmas.partition, 
                                       params.amountOut);
         //transfer usdc to user
-        //_traderWithdraw(msg.sender, params.amountOut - amountIn);
-        transfer(msg.sender, params.amountOut - amountIn);
+        _traderWithdraw(msg.sender, params.amountOut - amountIn);
         //todo event trigger 
         emit SellNo(amountIn, params.amountOut, pool);
     }
