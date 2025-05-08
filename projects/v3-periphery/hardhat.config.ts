@@ -148,9 +148,13 @@ export default {
       accounts : [process.env.PRIVATE_KEY]
     },
     bsctestnet: {
-      url: `https://bsc-testnet.public.blastapi.io`,
+      url: `https://base-sepolia.gateway.tenderly.co`,
       accounts : [process.env.PRIVATE_KEY]
     },
+    pharostestnet: {
+      url: `https://devnet.dplabs-internal.com`,
+      accounts : [process.env.PRIVATE_KEY]
+    }
   },
 
   etherscan: {

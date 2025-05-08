@@ -110,10 +110,10 @@ contract Vault1 is PeripheryValidation,ERC1155Receiver,ERC20{
 
     // 上次更新时间戳
     uint256 public lastUpdateTimestamp;
-    event BuyYes(uint256 amountIn, uint256 amountOut,address pool);
-    event SellYes(uint256 amountIn, uint256 amountOut,address pool);
-    event BuyNo(uint256 amountIn, uint256 amountOut,address pool);
-    event SellNo(uint256 amountIn, uint256 amountOut,address pool);
+    event BuyYes(uint256 amountIn, uint256 amountOut,address pool, address recipient);
+    event SellYes(uint256 amountIn, uint256 amountOut,address pool, address recipient);
+    event BuyNo(uint256 amountIn, uint256 amountOut,address pool, address recipient);
+    event SellNo(uint256 amountIn, uint256 amountOut,address pool, address recipient);
     event IncreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
     constructor(address _usdcTokenAddress, address _NonfungiblePositionManager, address _ctf, address _swaprouter) 
     ERC20('USD Bubbly', 'USDB')
@@ -298,7 +298,7 @@ contract Vault1 is PeripheryValidation,ERC1155Receiver,ERC20{
 
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
         //todo event trigger 
-        emit BuyYes(params.amountIn, amountOut, pool);
+        emit BuyYes(params.amountIn, amountOut, pool, msg.sender);
     }
     function sellYes(ISwapRouter.ExactInputSingleParams calldata params, address pool) external {
         //tokenIn always wrapped1155
@@ -308,7 +308,7 @@ contract Vault1 is PeripheryValidation,ERC1155Receiver,ERC20{
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
         //_traderWithdraw(msg.sender, amountOut);
         transfer(msg.sender,amountOut);
-        emit SellYes(params.amountIn, amountOut, pool);
+        emit SellYes(params.amountIn, amountOut, pool, msg.sender);
     }
 
     function buyNo(ISwapRouter.ExactInputSingleParams calldata params,                           
@@ -352,7 +352,7 @@ contract Vault1 is PeripheryValidation,ERC1155Receiver,ERC20{
         //_traderWithdraw(msg.sender, amountOut);
         transfer(msg.sender, params.amountIn - amountOut);
         
-        emit BuyNo(params.amountIn, amountOut, pool);
+        emit BuyNo(params.amountIn, amountOut, pool , msg.sender);
     }
 
     function sellNo(ISwapRouter.ExactOutputSingleParams calldata params, 
@@ -386,7 +386,7 @@ contract Vault1 is PeripheryValidation,ERC1155Receiver,ERC20{
         //_traderWithdraw(msg.sender, params.amountOut - amountIn);
         transfer(msg.sender, params.amountOut - amountIn);
         //todo event trigger 
-        emit SellNo(amountIn, params.amountOut, pool);
+        emit SellNo(amountIn, params.amountOut, pool, msg.sender);
     }
     function _traderDeposit(address account,uint256 amount) internal{
         _mint(account,amount);

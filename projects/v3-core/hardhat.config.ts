@@ -106,6 +106,11 @@ export default {
       url: `https://bsc-testnet.drpc.org`,
       accounts : [process.env.PRIVATE_KEY]
     },
+    pharostestnet: {
+      url: `https://devnet.dplabs-internal.com`,
+      accounts : [process.env.PRIVATE_KEY]
+    }
+    
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,

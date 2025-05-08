@@ -1,0 +1,9 @@
+{
+  "SwapRouter": "0x3D8Bd7b54631F5A98BE9Ca97aa5f7B1b2078FC5D",
+  "V3Migrator": "0x33a6d08bb2b58d88acDd398A0A815715d66Ee869",
+  "QuoterV2": "0xC8Ebbf08Cb2A87aB90cC8EeC34C721764b7755e9",
+  "TickLens": "0x801EE630b30Dcf4C3B85EcdC0c4f62422bC123d2",
+  "NonfungibleTokenPositionDescriptor": "0x26dd0eE2cc023caDA22Ff34ef59F70A3175dFb21",
+  "NonfungiblePositionManager": "0xa2d02534A8f6467CBA81fB6e5371365905B95b73",
+  "BubblyInterfaceMulticall": "0x82294863d2a8dd9aeD73C144043D5c1E15D596FC"
+}
