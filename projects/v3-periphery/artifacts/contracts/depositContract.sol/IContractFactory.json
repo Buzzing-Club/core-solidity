@@ -1,0 +1,39 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IContractFactory",
+  "sourceName": "contracts/depositContract.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "parameters",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "factoryOwner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "BLPAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "usdcAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "eoa",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
