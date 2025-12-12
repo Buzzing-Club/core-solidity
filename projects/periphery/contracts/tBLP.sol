@@ -28,7 +28,7 @@ interface UsdbLike {
     function transferFrom(address, address, uint256) external;
     function distribute(address, uint256) external;
 }
-contract rBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
+contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
     using MathUpgradeable for uint256;
     // --- Storage Variables ---
     mapping (address => uint256) public wards;
