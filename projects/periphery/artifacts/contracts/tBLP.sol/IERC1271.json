@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "IERC1271",
-  "sourceName": "contracts/rBLP.sol",
+  "sourceName": "contracts/tBLP.sol",
   "abi": [
     {
       "inputs": [

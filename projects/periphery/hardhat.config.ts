@@ -234,7 +234,7 @@ export default {
       'contracts/DynamicFeeManager.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/interfaces/IDynamicFeeManager.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/interfaces/IBLPToken.sol':SUSDBVAULT_COMPILER_SETTINGS,
-      'contracts/rBLP.sol':SUSDBVAULT_COMPILER_SETTINGS,
+      'contracts/tBLP.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/sBLP.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/TradeMangaer.sol':SUSDBVAULT_COMPILER_SETTINGS
     },
