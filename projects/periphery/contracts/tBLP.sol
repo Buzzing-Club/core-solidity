@@ -154,7 +154,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
 
         uint256 shares = previewDeposit(assets);
         scaleVariables(shares, assets, true);
-        totalDeposited += assets;
+        //totalDeposited += assets;
         _deposit(_msgSender(), receiver, assets, shares);
         return shares;
     }
@@ -164,7 +164,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
 
         uint256 assets = previewMint(shares);
         scaleVariables(shares, assets, true);
-        totalDeposited += assets;
+        //totalDeposited += assets;
         _deposit(_msgSender(), receiver, assets, shares);
         return assets;
     }
@@ -179,7 +179,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
         uint256 shares = previewWithdraw(assets);
 
         scaleVariables(shares, assets, false);
-        totalDeposited -= assets;
+        //totalDeposited -= assets;
         _withdraw(_msgSender(), receiver, owner, assets, shares);
         return shares;
     }
@@ -189,7 +189,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
 
         uint256 assets = previewRedeem(shares);
         scaleVariables(shares, assets, false);
-        totalDeposited -= assets;
+        //totalDeposited -= assets;
         _withdraw(_msgSender(), receiver, owner, assets, shares);
         return assets;
     }

@@ -261,6 +261,12 @@ contract tradeManager is Initializable {
     event SellNo(uint256 amountIn, uint256 amountOut,address pool, address recipient);
     event IncreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
     event PnLHandled(int256 indexed totalPnl, int256 sBLPPnl, int256 rBLPPnl);
+    event MarketReported(
+    address indexed reporter,
+    address indexed pool,
+    bool isYes,
+    uint256 reportIndex
+);
 
     // --- Modifiers ---
 
@@ -302,11 +308,6 @@ contract tradeManager is Initializable {
         emit Rely(msg.sender);
     }
 
-    // function _authorizeUpgrade(address newImplementation) internal override auth {}
-
-    // function getImplementation() external view returns (address) {
-    //     return ERC1967Utils.getImplementation();
-    // }
     // --- BUZZING---
     function addLiquidity(MintParams calldata mintParams,
                           SplitPositionParams calldata splitPositionParmas,
@@ -342,10 +343,10 @@ contract tradeManager is Initializable {
                                          transferParmas.id, 
                                          transferParmas.value, 
                                          transferParmas.data);
-        address wrappedERC1155Adress = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,transferParmas.id, transferParmas.data);
+        address wrappedERC1155Address = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,transferParmas.id, transferParmas.data);
         // max approve for mint
         
-        IERC20(wrappedERC1155Adress).approve(NonfungiblePositionManager,type(uint256).max);
+        IERC20(wrappedERC1155Address).approve(NonfungiblePositionManager,type(uint256).max);
         
         IERC20(splitPositionParmas.collateralToken).approve(NonfungiblePositionManager,type(uint256).max);
         
@@ -458,11 +459,21 @@ contract tradeManager is Initializable {
                                       splitPositionParmas.partition, 
                                       splitPositionParmas.amount);
         //transfer no to user
-        CTF(ctfAddress).safeTransferFrom(address(this), 
-                                         msg.sender, 
+        // CTF(ctfAddress).safeTransferFrom(address(this), 
+        //                                  msg.sender, 
+        //                                  noPositionId, 
+        //                                  splitPositionParmas.amount, 
+        //                                  "");       
+        //transfer no to factory to get erc20
+        CTF(ctfAddress).safeTransferFrom(transferParmas.from, 
+                                         transferParmas.to, 
                                          noPositionId, 
                                          splitPositionParmas.amount, 
-                                         "");       
+                                         transferParmas.data); 
+        address noTokenAddress = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,noPositionId, transferParmas.data);  
+        //transfer erc20 notoken to user
+        IERC20(noTokenAddress).transfer(receiver,splitPositionParmas.amount);  
+
         //get wrapped erc1155 from factory ,transfer without approve
         CTF(ctfAddress).safeTransferFrom(transferParmas.from, 
                                          transferParmas.to, 
@@ -470,9 +481,9 @@ contract tradeManager is Initializable {
                                          transferParmas.value, 
                                          transferParmas.data);
 
-        address wrappedERC1155Adress = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,transferParmas.id, transferParmas.data);
+        address wrappedERC1155Address = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,transferParmas.id, transferParmas.data);
         // max approve for swap yes to usd
-        IERC20(wrappedERC1155Adress).approve(SwapRouter,type(uint256).max);
+        IERC20(wrappedERC1155Address).approve(SwapRouter,type(uint256).max);
 
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
         //pull usdb from user
@@ -516,7 +527,17 @@ contract tradeManager is Initializable {
                                                   unwrappedParams.recipient, 
                                                   unwrappedParams.data);
         //transfer no to vault for merge
-        CTF(ctfAddress).safeTransferFrom(msg.sender, address(this), noPositionId, params.amountOut, "");
+        //CTF(ctfAddress).safeTransferFrom(msg.sender, address(this), noPositionId, params.amountOut, "");
+        address noTokenAddress = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,noPositionId, unwrappedParams.data);  
+        //transfer erc20 notoken to contract
+        IERC20(noTokenAddress).transferFrom(msg.sender, address(this), params.amountOut);
+
+        Wrapped1155Factory(ERC1155Factory).unwrap(unwrappedParams.multiToken, 
+                                                  noPositionId, 
+                                                  params.amountOut, 
+                                                  unwrappedParams.recipient, 
+                                                  unwrappedParams.data);
+
         CTF(ctfAddress).mergePositions(splitPositionParmas.collateralToken, 
                                       splitPositionParmas.parentCollectionId, 
                                       splitPositionParmas.conditionId, 
@@ -568,14 +589,7 @@ contract tradeManager is Initializable {
     function _traderDeposit(address account,uint256 amount) internal{
         IERC20(usdbTokenAddress).mint(account,amount);
     }
-    // function traderDeposit(address account,uint256 amount) public{
-    //     IERC20(usdc).transferFrom(account, address(this), amount);
-    //     IERC20(usdbTokenAddress).mint(account,amount);
-    // }
-    // function traderWithdraw(address account,uint256 amount) public{
-    //     usdc.burn(account,amount);
-    //     usdc.transfer(account,amount);
-    // }
+    
     function onERC1155Received(
         address operator,
         address /* from */,
@@ -763,9 +777,10 @@ contract tradeManager is Initializable {
         if(reportedCounts[pool] == reportCount ){
             int256 marketPnl = exposureCalculate(pool,isYes);
             _handlePnl(marketPnl);
+            totalExposure -= _exposureCalculate(pool);
         }
+        emit MarketReported(msg.sender, pool, isYes, reportedCounts[pool]);
         
-        totalExposure -= _exposureCalculate(pool);
     }
     function LPDeposit(uint256 assets, address receiver,bool isRisk) public {
         if(isRisk){

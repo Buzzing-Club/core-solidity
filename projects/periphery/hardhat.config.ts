@@ -236,7 +236,8 @@ export default {
       'contracts/interfaces/IBLPToken.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/tBLP.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/sBLP.sol':SUSDBVAULT_COMPILER_SETTINGS,
-      'contracts/TradeMangaer.sol':SUSDBVAULT_COMPILER_SETTINGS
+      'contracts/TradeMangaer.sol':SUSDBVAULT_COMPILER_SETTINGS,
+      'contracts/PreTrading.sol':SUSDBVAULT_COMPILER_SETTINGS
     },
   },
   watcher: {

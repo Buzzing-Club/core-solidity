@@ -1504,11 +1504,11 @@ contract ConditionalTokens is ERC1155 {
     /// Denominator is also used for checking if the condition has been resolved. If the denominator is non-zero, then the condition has been resolved.
     mapping(bytes32 => uint) public payoutDenominator;
     
-    uint256 public resolveCount;
-    mapping(bytes32 => uint256) public modifyCount;
-    function setResolveCount (uint256 _resolveCount) external {
-        resolveCount = _resolveCount;
-    }
+    // uint256 public resolveCount;
+    // mapping(bytes32 => uint256) public modifyCount;
+    // function setResolveCount (uint256 _resolveCount) external {
+    //     resolveCount = _resolveCount;
+    // }
 
     
     /// @dev This function prepares a condition by initializing a payout vector associated with the condition.
@@ -1548,25 +1548,25 @@ contract ConditionalTokens is ERC1155 {
         payoutDenominator[conditionId] = den;
         emit ConditionResolution(conditionId, msg.sender, questionId, outcomeSlotCount, payoutNumerators[conditionId]);
     }
-    function modifyPayouts(bytes32 questionId, uint[] calldata payouts) external {
-        uint outcomeSlotCount = payouts.length;
-        require(outcomeSlotCount > 1, "there should be more than one outcome slot");
-        // IMPORTANT, the oracle is enforced to be the sender because it's part of the hash.
-        bytes32 conditionId = CTHelpers.getConditionId(msg.sender, questionId, outcomeSlotCount);
-        require(payoutNumerators[conditionId].length == outcomeSlotCount, "condition not prepared or found");
-        // require(payoutDenominator[conditionId] == 0, "payout denominator already set");
+    // function modifyPayouts(bytes32 questionId, uint[] calldata payouts) external {
+    //     uint outcomeSlotCount = payouts.length;
+    //     require(outcomeSlotCount > 1, "there should be more than one outcome slot");
+    //     // IMPORTANT, the oracle is enforced to be the sender because it's part of the hash.
+    //     bytes32 conditionId = CTHelpers.getConditionId(msg.sender, questionId, outcomeSlotCount);
+    //     require(payoutNumerators[conditionId].length == outcomeSlotCount, "condition not prepared or found");
+    //     // require(payoutDenominator[conditionId] == 0, "payout denominator already set");
 
-        uint den = 0;
-        for (uint i = 0; i < outcomeSlotCount; i++) {
-            uint num = payouts[i];
-            den = den.add(num);
-            // require(payoutNumerators[conditionId][i] == 0, "payout numerator already set");
-            payoutNumerators[conditionId][i] = num;
-        }
-        require(den > 0, "payout is all zeroes");
-        payoutDenominator[conditionId] = den;
-        emit ConditionResolution(conditionId, msg.sender, questionId, outcomeSlotCount, payoutNumerators[conditionId]);
-    }
+    //     uint den = 0;
+    //     for (uint i = 0; i < outcomeSlotCount; i++) {
+    //         uint num = payouts[i];
+    //         den = den.add(num);
+    //         // require(payoutNumerators[conditionId][i] == 0, "payout numerator already set");
+    //         payoutNumerators[conditionId][i] = num;
+    //     }
+    //     require(den > 0, "payout is all zeroes");
+    //     payoutDenominator[conditionId] = den;
+    //     emit ConditionResolution(conditionId, msg.sender, questionId, outcomeSlotCount, payoutNumerators[conditionId]);
+    // }
     /// @dev This function splits a position. If splitting from the collateral, this contract will attempt to transfer `amount` collateral from the message sender to itself. Otherwise, this contract will burn `amount` stake held by the message sender in the position being split worth of EIP 1155 tokens. Regardless, if successful, `amount` stake will be minted in the split target positions. If any of the transfers, mints, or burns fail, the transaction will revert. The transaction will also revert if the given partition is trivial, invalid, or refers to more slots than the condition is prepared with.
     /// @param collateralToken The address of the positions' backing collateral token.
     /// @param parentCollectionId The ID of the outcome collections common to the position being split and the split target positions. May be null, in which only the collateral is shared.
@@ -1692,8 +1692,8 @@ contract ConditionalTokens is ERC1155 {
         require(den > 0, "result for condition not received yet");
         uint outcomeSlotCount = payoutNumerators[conditionId].length;
         require(outcomeSlotCount > 0, "condition not prepared yet");
-        require(modifyCount[conditionId] > 0 , "no resolve in market");
-        require(modifyCount[conditionId] == resolveCount, "market still in resolve");
+        // require(modifyCount[conditionId] > 0 , "no resolve in market");
+        // require(modifyCount[conditionId] == resolveCount, "market still in resolve");
         uint totalPayout = 0;
 
         uint fullIndexSet = (1 << outcomeSlotCount) - 1;

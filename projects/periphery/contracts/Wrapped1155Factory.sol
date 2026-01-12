@@ -296,6 +296,7 @@ interface IERC20 {
      * a call to {approve}. `value` is the new allowance.
      */
     event Approval(address indexed owner, address indexed spender, uint256 value);
+
 }
 
 // File: @openzeppelin/contracts@3.4.0/math/SafeMath.sol
@@ -573,7 +574,7 @@ contract ERC20 is Context, IERC20 {
     constructor (string memory name_, string memory symbol_) public {
         _name = name_;
         _symbol = symbol_;
-        _decimals = 18;
+        _decimals = 6;
     }
 
     /**
@@ -1114,8 +1115,20 @@ contract Wrapped1155Metadata {
 }
 
 contract Wrapped1155 is Wrapped1155Metadata, ERC20 {
+    /*//////////////////////////////////////////////////////////////
+                            EIP-2612 STORAGE
+    //////////////////////////////////////////////////////////////*/
 
-    constructor() public ERC20("Wrapped ERC-1155 Implementation", "WMT*") {}
+    uint256 internal immutable INITIAL_CHAIN_ID;
+
+    bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;
+
+    mapping(address => uint256) public nonces;
+
+    constructor() public ERC20("Wrapped ERC-1155 Implementation", "WMT*") {
+        INITIAL_CHAIN_ID = _chainId();
+        INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
+    }
 
     function mint(address account, uint256 amount) external onlyFactory {
         _mint(account, amount);
@@ -1124,6 +1137,76 @@ contract Wrapped1155 is Wrapped1155Metadata, ERC20 {
     function burn(address account, uint256 amount) external onlyFactory {
         _burn(account, amount);
     }
+
+    /*//////////////////////////////////////////////////////////////
+                             EIP-2612 LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public {
+        require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
+
+    
+        address recoveredAddress = ecrecover(
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    DOMAIN_SEPARATOR(),
+                    keccak256(
+                        abi.encode(
+                            keccak256(
+                                "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
+                            ),
+                            owner,
+                            spender,
+                            value,
+                            nonces[owner]++,
+                            deadline
+                        )
+                    )
+                )
+            ),
+            v,
+            r,
+            s
+        );
+
+        require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_SIGNER");
+
+        _approve(recoveredAddress, spender, value);
+
+
+        //emit Approval(owner, spender, value);
+    }
+    function _chainId() internal pure returns (uint256 chainId) {
+        assembly {
+            chainId := chainid()
+        }
+    }
+    function DOMAIN_SEPARATOR() public view returns (bytes32) {
+        return _chainId() == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
+    }
+
+    function computeDomainSeparator() internal view returns (bytes32) {
+        return
+            keccak256(
+                abi.encode(
+                    keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                    keccak256(bytes(name())),
+                    keccak256("1"),
+                    _chainId(),
+                    address(this)
+                )
+            );
+    }
+
 }
 
 contract Wrapped1155Factory is ERC1155Receiver {

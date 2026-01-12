@@ -134,6 +134,61 @@
       "address": "0x1963095eFc1c32B601b6d3503C48d69BE8894c28",
       "txHash": "0xa90ea08a1e3919de97fdcc27994ebca1a29cb83ada888a978afae11b6355981a",
       "kind": "transparent"
+    },
+    {
+      "address": "0x0AB7De92cf4EF60eDDE650c6aC4b3071F1fd2F0F",
+      "txHash": "0x472567e5ae8bb343f48d3851409e01b2b9890dafb50008b13b9686781009418a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x82A4E4bEA885E1b45604ab4FbB7dfDe92AB35180",
+      "txHash": "0x4fff1fd3a74a54b7a5c799873880c6f63daa42969dd05b5657f9d98372418f02",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xE75fddEee48EbD4b2b1a849531Ec3bE41C94885b",
+      "txHash": "0x20ae6fec862d806a3dc908d857730d4a2eef6813b8fa061fe8b61928fdc85874",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1791Cd10c841Cd5667F08C2bbcB9B33F4A100762",
+      "txHash": "0xa7d2a5e466421edaedc161b752dc80107e821a9231b1ab9d31a4a64a19f4813d",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x349cc887Cd0081F496020c2Da1469C275A24930a",
+      "txHash": "0x75d868b125229288b465712c0618d9cb55e8faefa500f9b52e958a14f8ef0fac",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xc4d09678c30C32Df1cC145A6087093a77Bc3d961",
+      "txHash": "0xf10045027361fc6ca810889b153eaee9aca78a4e2ed1820586be56546d41ad84",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x099b2D50C6dC292939125e9D95143921EAa6A728",
+      "txHash": "0x2f1dd4b28db0f4c4607a12d593f7ce7f20f011acfc637af770951c0ccc30a966",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x3a6Ba852bD0fA93211Ee41AcF53790A4d323b1c5",
+      "txHash": "0xa2f1bb12f0e04553288820d7dd23acdd64b852e2457c4efa8135367f2cce09ca",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x85345b358ae3ffDeB6E4aA0eb956d6DD4ad25e04",
+      "txHash": "0x7828c14ae0b6622944f52a8a989cd260cf640f96cbea26001fd5a73d0a272a2e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0AFf7b40a72263793fBe5E4FAaE65F50433dCA6B",
+      "txHash": "0xe4f662244b3704af11f31c8ee8be480580dd3edbb35a3519d2c5817939617699",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x1523C02cB8aC0CB83f0d5D05fF2772eC06613D3F",
+      "txHash": "0x2391fafd6efc4463c873394781d3494e5a125d8037c22e7dc3004fd330758808",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -1199,6 +1254,298 @@
             "label": "mapping(address => struct UserNoPosition)"
           },
           "t_struct(UserNoPosition)466_storage": {
+            "label": "struct UserNoPosition",
+            "members": [
+              {
+                "label": "noTokenAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "usdSpent",
+                "type": "t_uint256"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "50eddcdb5fcd836cbc5b2395528aedbf013bc179a3f6a99f32487d30ad596dae": {
+      "address": "0xddd5E41Ce2ebDc6edC3893eFe48c5349d7f66Cd3",
+      "txHash": "0xcc4b631bf8df35476a34e823364da553d368aa33e8df17ebb329e503f0240e71",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "contract": "tradeManager",
+            "label": "wards",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:206"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "PRECISION",
+            "type": "t_uint256",
+            "src": "contracts\\TradeMangaer.sol:209"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "reportCount",
+            "type": "t_uint256",
+            "src": "contracts\\TradeMangaer.sol:210"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "usdb",
+            "type": "t_contract(UsdbLike)131",
+            "src": "contracts\\TradeMangaer.sol:215"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "NonfungiblePositionManager",
+            "type": "t_address",
+            "src": "contracts\\TradeMangaer.sol:218"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "SwapRouter",
+            "type": "t_address",
+            "src": "contracts\\TradeMangaer.sol:219"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "usdbTokenAddress",
+            "type": "t_address",
+            "src": "contracts\\TradeMangaer.sol:220"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "ctfAddress",
+            "type": "t_address",
+            "src": "contracts\\TradeMangaer.sol:221"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "feeAdapter",
+            "type": "t_address",
+            "src": "contracts\\TradeMangaer.sol:222"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "feeManager",
+            "type": "t_address",
+            "src": "contracts\\TradeMangaer.sol:223"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "yieldProtocol",
+            "type": "t_address",
+            "src": "contracts\\TradeMangaer.sol:224"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "yieldPrincipal",
+            "type": "t_uint256",
+            "src": "contracts\\TradeMangaer.sol:225"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "yieldPrincipalUsed",
+            "type": "t_uint256",
+            "src": "contracts\\TradeMangaer.sol:226"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "totalExposure",
+            "type": "t_int256",
+            "src": "contracts\\TradeMangaer.sol:227"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "totalPnl",
+            "type": "t_int256",
+            "src": "contracts\\TradeMangaer.sol:228"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "bufferFunds",
+            "type": "t_uint256",
+            "src": "contracts\\TradeMangaer.sol:229"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "yieldInterest",
+            "type": "t_uint256",
+            "src": "contracts\\TradeMangaer.sol:230"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "usdc",
+            "type": "t_contract(IERC20)97",
+            "src": "contracts\\TradeMangaer.sol:231"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sellYesAmount",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:232"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sellNoAmount",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:233"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "buyYesAmount",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:234"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "buyNoAmount",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:235"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sellYesUSD",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:236"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sellNoUSD",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:237"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "buyYesUSD",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:238"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "buyNoUSD",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:239"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "marketExposure",
+            "type": "t_mapping(t_address,t_int256)",
+            "src": "contracts\\TradeMangaer.sol:240"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "marketUSDB",
+            "type": "t_mapping(t_address,t_int256)",
+            "src": "contracts\\TradeMangaer.sol:241"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "userRiskFreePrincipal",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:242"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "userRiskPrincipal",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:243"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "userYesPositions",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_struct(UserYesPosition)460_storage))",
+            "src": "contracts\\TradeMangaer.sol:244"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "userNoPositions",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_struct(UserNoPosition)465_storage))",
+            "src": "contracts\\TradeMangaer.sol:245"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "reportedCounts",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeMangaer.sol:246"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "rBLP",
+            "type": "t_address",
+            "src": "contracts\\TradeMangaer.sol:248"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sBLP",
+            "type": "t_address",
+            "src": "contracts\\TradeMangaer.sol:249"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "RiskCoefficient",
+            "type": "t_int256",
+            "src": "contracts\\TradeMangaer.sol:250"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "riskThreshold",
+            "type": "t_int256",
+            "src": "contracts\\TradeMangaer.sol:251"
+          }
+        ],
+        "types": {
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(UsdbLike)131": {
+            "label": "contract UsdbLike"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_contract(IERC20)97": {
+            "label": "contract IERC20"
+          },
+          "t_mapping(t_address,t_int256)": {
+            "label": "mapping(address => int256)"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_struct(UserYesPosition)460_storage))": {
+            "label": "mapping(address => mapping(address => struct UserYesPosition))"
+          },
+          "t_mapping(t_address,t_struct(UserYesPosition)460_storage)": {
+            "label": "mapping(address => struct UserYesPosition)"
+          },
+          "t_struct(UserYesPosition)460_storage": {
+            "label": "struct UserYesPosition",
+            "members": [
+              {
+                "label": "yesTokenAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "usdSpent",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_struct(UserNoPosition)465_storage))": {
+            "label": "mapping(address => mapping(address => struct UserNoPosition))"
+          },
+          "t_mapping(t_address,t_struct(UserNoPosition)465_storage)": {
+            "label": "mapping(address => struct UserNoPosition)"
+          },
+          "t_struct(UserNoPosition)465_storage": {
             "label": "struct UserNoPosition",
             "members": [
               {
