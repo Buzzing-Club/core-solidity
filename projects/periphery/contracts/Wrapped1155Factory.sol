@@ -1152,8 +1152,6 @@ contract Wrapped1155 is Wrapped1155Metadata, ERC20 {
         bytes32 s
     ) public {
         require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
-
-    
         address recoveredAddress = ecrecover(
             keccak256(
                 abi.encodePacked(
@@ -1179,7 +1177,7 @@ contract Wrapped1155 is Wrapped1155Metadata, ERC20 {
         );
 
         require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_SIGNER");
-
+        
         _approve(recoveredAddress, spender, value);
 
 
@@ -1191,7 +1189,7 @@ contract Wrapped1155 is Wrapped1155Metadata, ERC20 {
         }
     }
     function DOMAIN_SEPARATOR() public view returns (bytes32) {
-        return _chainId() == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
+        return computeDomainSeparator();
     }
 
     function computeDomainSeparator() internal view returns (bytes32) {

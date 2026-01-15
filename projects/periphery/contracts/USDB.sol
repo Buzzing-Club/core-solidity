@@ -154,7 +154,7 @@ abstract contract ERC20 {
                 r,
                 s
             );
-
+            
             require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_SIGNER");
 
             allowance[recoveredAddress][spender] = value;
@@ -164,7 +164,9 @@ abstract contract ERC20 {
     }
 
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
+        
         return block.chainid == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
+        
     }
 
     function computeDomainSeparator() internal view virtual returns (bytes32) {

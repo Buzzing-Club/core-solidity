@@ -33,6 +33,7 @@ interface IERC20{
     function burn(address from, uint256 amount) external;
     function mint(address to, uint256 amount) external;
     function balanceOf(address to) external returns (uint256);
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 }
 interface IERC1271 {
     function isValidSignature(
@@ -198,6 +199,15 @@ struct UserNoPosition {
     uint256 noTokenAmount;  
     uint256 usdSpent;   
 }
+struct Permit {
+    address owner;
+    address spender;
+    uint256 value;
+    uint256 deadline;
+    uint8 v;
+    bytes32 r;
+    bytes32 s;
+}
 contract tradeManager is Initializable {
     using MathUpgradeable for uint256;
     // --- Storage Variables ---
@@ -362,9 +372,13 @@ contract tradeManager is Initializable {
     
     }
 
-    function buyYes(ExactInputSingleParams calldata params, address pool, uint256 minAmount,address receiver) external {
+    function buyYes(ExactInputSingleParams calldata params, address pool, uint256 minAmount,address receiver,Permit calldata permitparams) external {
         _checkPool(pool);
-        IERC20(usdbTokenAddress).transferFrom(msg.sender,address(this), params.amountIn);
+        if(permitparams.owner != msg.sender){
+            //permit for usdb transferFrom
+            IERC20(usdbTokenAddress).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
+        }
+        IERC20(usdbTokenAddress).transferFrom(permitparams.owner,address(this), params.amountIn);
         require(params.tokenIn == usdbTokenAddress);
 
         IERC20(params.tokenIn).approve(SwapRouter,type(uint256).max);   
@@ -372,7 +386,7 @@ contract tradeManager is Initializable {
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
         _tickcheck(pool);
         //user position update
-        UserYesPosition storage pos = userYesPositions[receiver][pool];
+        UserYesPosition storage pos = userYesPositions[permitparams.owner][pool];
         pos.yesTokenAmount += amountOut;
         pos.usdSpent += params.amountIn;
         buyYesAmount[pool] = buyYesAmount[pool] +  amountOut;
@@ -380,14 +394,17 @@ contract tradeManager is Initializable {
         require(amountOut >= minAmount,"yes not enough");
         _updateExposure(pool);
         _exposureCheck();
-        emit BuyYes(params.amountIn, amountOut, pool, receiver);
+        emit BuyYes(params.amountIn, amountOut, pool, permitparams.owner);
     }
 
-    function sellYes(ExactInputSingleParams calldata params, address pool, uint256 minAmount,address referrer) external {
+    function sellYes(ExactInputSingleParams calldata params, address pool, uint256 minAmount,address referrer,Permit calldata permitparams) external {
         //tokenIn always wrapped1155
         _checkPool(pool);
-        
-        IERC20(params.tokenIn).transferFrom(msg.sender,address(this),params.amountIn);
+        if(permitparams.owner != msg.sender){
+            //permit for yestoken transferFrom
+            IERC20(params.tokenIn).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
+        }
+        IERC20(params.tokenIn).transferFrom(permitparams.owner,address(this),params.amountIn);
         require(params.tokenIn != usdbTokenAddress);
         IERC20(params.tokenIn).approve(SwapRouter,type(uint256).max); 
         
@@ -410,7 +427,7 @@ contract tradeManager is Initializable {
         // 2. Compute fee based on volatility and ticks crossed
         uint256 dynamicfee = IFeeManager(feeManager).computeFee(pool, ticksCrossed, amountOut);
         //base fee for roles
-        IERC20(usdbTokenAddress).transfer(msg.sender, amountOut - totalFeeAmount - dynamicfee);
+        IERC20(usdbTokenAddress).transfer(permitparams.owner, amountOut - totalFeeAmount - dynamicfee);
         IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount + dynamicfee);
         IFeeAdapter(feeAdapter).recordFee(pool, referrer, usdbTokenAddress, totalFeeAmount + dynamicfee);
         sellYesAmount[pool] = sellYesAmount[pool] +  params.amountIn;
@@ -425,7 +442,7 @@ contract tradeManager is Initializable {
         //exposure check
         _updateExposure(pool);
         _exposureCheck();
-        UserYesPosition storage pos = userYesPositions[msg.sender][pool];
+        UserYesPosition storage pos = userYesPositions[permitparams.owner][pool];
         uint256 avgPrice = pos.usdSpent * PRECISION / pos.yesTokenAmount;
        
         uint256 sellPrice = amountOut * PRECISION / params.amountIn;
@@ -434,7 +451,7 @@ contract tradeManager is Initializable {
        
         _handlePnl(pnl + int256(LPfee));
         
-        emit SellYes(params.amountIn, amountOut, pool, msg.sender);
+        emit SellYes(params.amountIn, amountOut, pool, permitparams.owner);
     }
 
     function buyNo(ExactInputSingleParams calldata params,                           
@@ -444,7 +461,8 @@ contract tradeManager is Initializable {
                    address ERC1155Factory,
                    address pool,
                    uint256 maxAmount,
-                   address receiver) 
+                   address receiver,
+                   Permit calldata permitparams) 
                    external 
     {
 
@@ -487,10 +505,14 @@ contract tradeManager is Initializable {
 
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
         //pull usdb from user
-        IERC20(usdbTokenAddress).transferFrom(msg.sender,address(this), params.amountIn - amountOut);
+        if(permitparams.owner != msg.sender){
+            //permit for yestoken transferFrom
+            IERC20(usdbTokenAddress).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
+        }
+        IERC20(usdbTokenAddress).transferFrom(permitparams.owner,address(this), params.amountIn - amountOut);
         IERC20(usdbTokenAddress).burn(address(this),params.amountIn);
 
-        UserNoPosition storage pos = userNoPositions[receiver][pool];
+        UserNoPosition storage pos = userNoPositions[permitparams.owner][pool];
         pos.noTokenAmount += params.amountIn;
         
         pos.usdSpent += params.amountIn - amountOut;
@@ -500,7 +522,7 @@ contract tradeManager is Initializable {
         require(params.amountIn - amountOut < maxAmount,"too much usd");
         _updateExposure(pool);
         _exposureCheck();
-        emit BuyNo(params.amountIn, amountOut, pool , receiver);
+        emit BuyNo(params.amountIn, amountOut, pool , permitparams.owner);
     }
     function sellNo(ExactOutputSingleParams calldata params, 
                     SplitPositionParams calldata splitPositionParmas, 
@@ -509,7 +531,8 @@ contract tradeManager is Initializable {
                     address ERC1155Factory,
                     address pool,
                     uint256 minAmount,
-                    address referrer) external 
+                    address referrer,
+                    Permit calldata permitparams) external 
     {
         _checkPool(pool);
         _traderDeposit(address(this), params.amountOut);
@@ -530,7 +553,11 @@ contract tradeManager is Initializable {
         //CTF(ctfAddress).safeTransferFrom(msg.sender, address(this), noPositionId, params.amountOut, "");
         address noTokenAddress = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,noPositionId, unwrappedParams.data);  
         //transfer erc20 notoken to contract
-        IERC20(noTokenAddress).transferFrom(msg.sender, address(this), params.amountOut);
+        if(permitparams.owner != msg.sender){
+            //permit for yestoken transferFrom
+            IERC20(noTokenAddress).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
+        }
+        IERC20(noTokenAddress).transferFrom(permitparams.owner,address(this),params.amountOut);
 
         Wrapped1155Factory(ERC1155Factory).unwrap(unwrappedParams.multiToken, 
                                                   noPositionId, 
@@ -560,7 +587,7 @@ contract tradeManager is Initializable {
         // 2. Compute fee based on volatility and ticks crossed
         uint256 dynamicfee = IFeeManager(feeManager).computeFee(pool, ticksCrossed, amountIn);
         //usdb transfer without fee
-        IERC20(usdbTokenAddress).transfer(msg.sender, params.amountOut - amountIn - totalFeeAmount - dynamicfee);
+        IERC20(usdbTokenAddress).transfer(permitparams.owner, params.amountOut - amountIn - totalFeeAmount - dynamicfee);
         //fee transfer
         IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount + dynamicfee);
         IFeeAdapter(feeAdapter).recordFee(pool, referrer, usdbTokenAddress, totalFeeAmount + dynamicfee);
@@ -577,14 +604,14 @@ contract tradeManager is Initializable {
         uint256 bufferfee = (totalFeeAmount + dynamicfee) * IFeeAdapter(feeAdapter).poolRoleShares(pool,'Buffer') / IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
         bufferFunds += bufferfee;
         //pnl calculation
-        UserNoPosition storage pos = userNoPositions[msg.sender][pool];
+        UserNoPosition storage pos = userNoPositions[permitparams.owner][pool];
         
         uint256 avgPrice = pos.usdSpent * PRECISION / pos.noTokenAmount;
     
         uint256 sellPrice = (params.amountOut - amountIn) * PRECISION / amountIn;
         int256 pnl = ((int256(sellPrice) - int256(avgPrice)) / int256(PRECISION) * int256(amountIn));
         _handlePnl(pnl + int256(LPfee));
-        emit SellNo(amountIn, params.amountOut, pool, msg.sender);
+        emit SellNo(amountIn, params.amountOut, pool, permitparams.owner);
     }
     function _traderDeposit(address account,uint256 amount) internal{
         IERC20(usdbTokenAddress).mint(account,amount);
