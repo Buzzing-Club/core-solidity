@@ -226,7 +226,13 @@ contract USDB is ERC20 {
     event Withdraw(address to ,uint256 amount);
     address public vault;
     address public asset;
+    address public owner;
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
     constructor(address _asset) ERC20("USD Buzzing", "USDB", 6) {
+        owner = msg.sender;
         _mint(msg.sender, 100000 ether);
         asset = _asset;
     }
@@ -244,9 +250,7 @@ contract USDB is ERC20 {
     function burn(address from, uint256 amount) public onlyVault  {
         _burn(from, amount);
     }
-    function mintForTest(address to, uint256 amount) public {
-        _mint(to, amount);
-    }
+
     function setVault(address _vault) public {
         vault = _vault;
     }
@@ -256,8 +260,8 @@ contract USDB is ERC20 {
         emit Deposit(to, amount);
     }
     function withdraw(address to, uint256 amount) public {
-        IERC20(asset).transfer(to, amount);
         _burn(msg.sender, amount);
+        IERC20(asset).transfer(to, amount);
         emit Withdraw(to, amount);
     }
 }

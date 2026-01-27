@@ -240,22 +240,22 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
         }
     }
     // PnL interactions (happens often, so also used to trigger other actions)
-    function sendAssets(uint256 assets, address receiver) external {
-        address sender = _msgSender();
-        if (sender != pnlHandler) revert OnlyTradingPnlHandler();
+    // function sendAssets(uint256 assets, address receiver) external {
+    //     address sender = _msgSender();
+    //     if (sender != pnlHandler) revert OnlyTradingPnlHandler();
 
-        int256 accPnlDelta = int256(
-            assets.mulDiv(
-                PRECISION_18,
-                totalSupply(),
-                MathUpgradeable.Rounding.Up
-            )
-        );
-        accPnlPerToken += accPnlDelta;
-        SafeERC20Upgradeable.safeTransfer(_assetIERC20(), receiver, assets);
+    //     int256 accPnlDelta = int256(
+    //         assets.mulDiv(
+    //             PRECISION_18,
+    //             totalSupply(),
+    //             MathUpgradeable.Rounding.Up
+    //         )
+    //     );
+    //     accPnlPerToken += accPnlDelta;
+    //     SafeERC20Upgradeable.safeTransfer(_assetIERC20(), receiver, assets);
 
-        emit AssetsSent(sender, receiver, assets);
-    }
+    //     emit AssetsSent(sender, receiver, assets);
+    // }
 
     function setUSDB(address _USDB) public auth{
         usdb = UsdbLike(_USDB);

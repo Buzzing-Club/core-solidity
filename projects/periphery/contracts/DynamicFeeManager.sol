@@ -19,6 +19,7 @@ contract DynamicFeeManager {
     uint256 public maxAccumulator;     // max value for volatility accumulator
     uint256 public variableFeeControl; // scaling factor for variable fee
     uint256 public baseFeeUnit;        // base fee per tick crossed (1e18 precision)
+    address public tradeManager;
 
     constructor(
         uint256 _filterPeriod,
@@ -26,7 +27,8 @@ contract DynamicFeeManager {
         uint256 _reductionFactor,
         uint256 _maxAccumulator,
         uint256 _variableFeeControl,
-        uint256 _baseFeeUnit
+        uint256 _baseFeeUnit,
+        address _tradeManager
     ) {
         filterPeriod = _filterPeriod;
         decayPeriod = _decayPeriod;
@@ -34,6 +36,7 @@ contract DynamicFeeManager {
         maxAccumulator = _maxAccumulator;
         variableFeeControl = _variableFeeControl;
         baseFeeUnit = _baseFeeUnit;
+        tradeManager = _tradeManager;
     }
 
     /**
@@ -47,6 +50,7 @@ contract DynamicFeeManager {
         int24 currentTick,
         uint256 ticksCrossed
     ) external {
+        require(msg.sender == tradeManager, "Unauthorized");
         PoolVolatility storage pv = poolVolatility[pool];
         uint256 t = block.timestamp - pv.lastUpdate;
 

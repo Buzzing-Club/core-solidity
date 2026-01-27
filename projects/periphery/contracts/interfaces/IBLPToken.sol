@@ -11,7 +11,7 @@ interface IBLPToken {
         string symbol;
     }
 
-    function sendAssets(uint256 assets, address receiver) external;
+    
 
     function distributePnl(uint256 assets) external;
 
@@ -19,24 +19,8 @@ interface IBLPToken {
 
     function shareToAssetsPrice() external view returns (uint256);
 
-    event ManagerUpdated(address newValue);
-    event AdminUpdated(address newValue);
-    event PnlHandlerUpdated(address newValue);
-    event OpenTradesPnlFeedUpdated(address newValue);
-
-    event WithdrawLockThresholdsPUpdated(uint256[2] newValue);
-    event MaxAccOpenPnlDeltaUpdated(uint256 newValue);
-    event MaxDailyAccPnlDeltaUpdated(uint256 newValue);
-    event MaxSupplyIncreaseDailyPUpdated(uint256 newValue);
-    event LossesBurnPUpdated(uint256 newValue);
-    event MaxGnsSupplyMintDailyPUpdated(uint256 newValue);
-    event MaxDiscountPUpdated(uint256 newValue);
-    event MaxDiscountThresholdPUpdated(uint256 newValue);
-
-    event CurrentMaxSupplyUpdated(uint256 newValue);
-    event DailyAccPnlDeltaReset();
     event ShareToAssetsPriceUpdated(uint256 newValue);
-    event OpenTradesPnlFeedCallFailed();
+    
 
     event WithdrawRequested(
         address indexed sender,
@@ -56,12 +40,6 @@ interface IBLPToken {
 
     event PnlDistributed(address indexed sender, uint256 assets);
     event Pnlreclaimed(address indexed sender, uint256 assets);
-
-    event AssetsSent(address indexed sender, address indexed receiver, uint256 assets);
-    event AssetsReceived(address indexed sender, address indexed user, uint256 assets, uint256 assetsLessDeplete, bool burn);
-
-    event Depleted(address indexed sender, uint256 assets, uint256 amountGns);
-    event Refilled(address indexed sender, uint256 assets, uint256 amountGns);
  
     event AccPnlPerTokenUsedUpdated(
         address indexed sender,
@@ -74,27 +52,10 @@ interface IBLPToken {
 
     error OnlyManager();
     error OnlyTradingPnlHandler();
-    error OnlyPnlFeed();
     error AddressZero();
     error PriceZero();
     error ValueZero();
     error BytesZero();
-    error NoActiveDiscount();
-    error BelowMin();
-    error AboveMax();
-    error WrongValue();
-    error WrongValues();
-    error GnsPriceCallFailed();
-    error GnsTokenPriceZero();
-    error PendingWithdrawal();
-    error EndOfEpoch();
-    error NotAllowed();
-    error NoDiscount();
-    error NotUnlocked();
-    error NotEnoughAssets();
-    error MaxDailyPnl();
-    error NotUnderCollateralized();
-    error AboveInflationLimit();
 
     // Ownable
     error OwnableInvalidOwner(address owner);
