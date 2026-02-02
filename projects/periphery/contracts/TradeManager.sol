@@ -762,7 +762,7 @@ contract tradeManager is Initializable {
         int256 availableFunds = _availableFunds();
         
         require(availableFunds >= 0 , 'availableFunds < 0');
-        require(totalExposure <= int256(availableFunds * RiskCoefficient),'exposure risk');
+        require(totalExposure <= int256(availableFunds * RiskCoefficient / 1e18),'exposure risk');
         
     }
     function _updateExposure(address pool) internal {
@@ -862,7 +862,7 @@ contract tradeManager is Initializable {
         
     }
     function _withdrawcheck(uint256 assets) internal {
-        int256 dynamicReservedFunds = riskThreshold * _availableFunds();
+        int256 dynamicReservedFunds = RiskCoefficient / 1e18 * _availableFunds();
         require(dynamicReservedFunds - int256(assets) > totalExposure,'wdc');
     }
 }
