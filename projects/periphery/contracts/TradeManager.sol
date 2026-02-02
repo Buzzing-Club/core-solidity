@@ -255,7 +255,7 @@ contract tradeManager is Initializable {
     mapping(address => mapping(address => UserNoPosition)) public userNoPositions;   // user => pool => position
     mapping(address => uint256) public reportedCounts;
     //vault
-    address public rBLP;
+    address public tBLP;
     address public sBLP;
     int256 public RiskCoefficient;
     int256 public riskThreshold;
@@ -264,19 +264,22 @@ contract tradeManager is Initializable {
 
     // Admin
     event Rely(address indexed usr);
+    event Deny(address indexed usr);
     // Buzzing
     event BuyYes(uint256 amountIn, uint256 amountOut,address pool, address recipient);
     event SellYes(uint256 amountIn, uint256 amountOut,address pool, address recipient);
     event BuyNo(uint256 amountIn, uint256 amountOut,address pool, address recipient);
     event SellNo(uint256 amountIn, uint256 amountOut,address pool, address recipient);
     event IncreaseLiquidity(uint256 indexed tokenId, uint128 liquidity, uint256 amount0, uint256 amount1);
-    event PnLHandled(int256 indexed totalPnl, int256 sBLPPnl, int256 rBLPPnl);
+    event PnLHandled(int256 indexed totalPnl, int256 sBLPPnl, int256 tBLPPnl);
     event MarketReported(
     address indexed reporter,
     address indexed pool,
     bool isYes,
     uint256 reportIndex
 );
+    event SetRiskThreshold(int256 threshold);
+    
 
     // --- Modifiers ---
 
@@ -298,10 +301,24 @@ contract tradeManager is Initializable {
         feeManager = _feeManager;
     }
 
+    // --- Admin external functions ---
 
+    function rely(address usr) external auth {
+        wards[usr] = 1;
+        emit Rely(usr);
+    }
+
+    function deny(address usr) external auth {
+        wards[usr] = 0;
+        emit Deny(usr);
+    }
+    function setRiskThreshold(int256 _threshold) external auth{
+        riskThreshold = _threshold;
+        emit SetRiskThreshold(riskThreshold);
+    }
     // --- Upgradability ---
 
-    function initialize(address _usdb , address _usdcTokenAddress, address _NonfungiblePositionManager, address _ctf, address _swaprouter,address _rBLP,address _sBLP) initializer external {
+    function initialize(address _usdb , address _usdcTokenAddress, address _NonfungiblePositionManager, address _ctf, address _swaprouter,address _tBLP,address _sBLP) initializer external {
         wards[msg.sender] = 1;
         usdb = UsdbLike(_usdb);
         
@@ -310,7 +327,7 @@ contract tradeManager is Initializable {
         NonfungiblePositionManager = _NonfungiblePositionManager;
         ctfAddress = _ctf;
         SwapRouter = _swaprouter;
-        rBLP = _rBLP;
+        tBLP = _tBLP;
         sBLP = _sBLP;
         PRECISION = 1e18;
         reportCount = 2;
@@ -326,6 +343,7 @@ contract tradeManager is Initializable {
                           address poolAddress)
         external
         checkDeadline(mintParams.deadline)
+        auth
         returns (
             uint256 tokenId,
             uint128 liquidity,
@@ -376,6 +394,7 @@ contract tradeManager is Initializable {
         _checkPool(pool);
         if(permitparams.owner != msg.sender){
             //permit for usdb transferFrom
+            require(wards[msg.sender] == 1);
             IERC20(usdbTokenAddress).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
         }
         IERC20(usdbTokenAddress).transferFrom(permitparams.owner,address(this), params.amountIn);
@@ -402,6 +421,7 @@ contract tradeManager is Initializable {
         _checkPool(pool);
         if(permitparams.owner != msg.sender){
             //permit for yestoken transferFrom
+            require(wards[msg.sender] == 1);
             IERC20(params.tokenIn).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
         }
         IERC20(params.tokenIn).transferFrom(permitparams.owner,address(this),params.amountIn);
@@ -448,8 +468,11 @@ contract tradeManager is Initializable {
         uint256 sellPrice = amountOut * PRECISION / params.amountIn;
         
         int256 pnl = ((int256(sellPrice) - int256(avgPrice))  * int256(params.amountIn) / int256(PRECISION));
-       
-        _handlePnl(pnl + int256(LPfee));
+        
+        _handlePnl(pnl + int256(LPfee)); 
+        pos.yesTokenAmount -= params.amountIn;
+        uint256 costReduced = pos.usdSpent * params.amountIn / pos.yesTokenAmount;
+        pos.usdSpent -= costReduced;
         
         emit SellYes(params.amountIn, amountOut, pool, permitparams.owner);
     }
@@ -507,6 +530,7 @@ contract tradeManager is Initializable {
         //pull usdb from user
         if(permitparams.owner != msg.sender){
             //permit for yestoken transferFrom
+            require(wards[msg.sender] == 1);
             IERC20(usdbTokenAddress).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
         }
         IERC20(usdbTokenAddress).transferFrom(permitparams.owner,address(this), params.amountIn - amountOut);
@@ -522,6 +546,9 @@ contract tradeManager is Initializable {
         require(params.amountIn - amountOut < maxAmount,"too much usd");
         _updateExposure(pool);
         _exposureCheck();
+        pos.noTokenAmount -= params.amountIn;
+        uint256 costReduced = pos.usdSpent * params.amountIn / pos.noTokenAmount;
+        pos.usdSpent -= costReduced;
         emit BuyNo(params.amountIn, amountOut, pool , permitparams.owner);
     }
     function sellNo(ExactOutputSingleParams calldata params, 
@@ -554,7 +581,8 @@ contract tradeManager is Initializable {
         address noTokenAddress = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,noPositionId, unwrappedParams.data);  
         //transfer erc20 notoken to contract
         if(permitparams.owner != msg.sender){
-            //permit for yestoken transferFrom
+            //permit for notoken transferFrom
+            require(wards[msg.sender] == 1);
             IERC20(noTokenAddress).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
         }
         IERC20(noTokenAddress).transferFrom(permitparams.owner,address(this),params.amountOut);
@@ -756,34 +784,34 @@ contract tradeManager is Initializable {
         uint256 shares = IYieldProtocol(yieldProtocol).balanceOf(address(this)); 
 
         _handleInterest();
-        int256 availableFunds = int256(IBLPToken(rBLP).marketCap()) + int256(IBLPToken(sBLP).marketCap()) + int256(bufferFunds) - int256(IBLPToken(sBLP).totalDeposited());
+        int256 availableFunds = int256(IBLPToken(tBLP).marketCap()) + int256(IBLPToken(sBLP).marketCap()) + int256(bufferFunds) - int256(IBLPToken(sBLP).totalDeposited());
 
         return availableFunds;
     }
     function _handlePnl(int256 pnl) internal {
        
-        int256 rBLPPnl = pnl * RiskCoefficient / 1e18;
+        int256 tBLPPnl = pnl * RiskCoefficient / 1e18;
         
-        int256 sBLPPnl = pnl - rBLPPnl;
+        int256 sBLPPnl = pnl - tBLPPnl;
         
         //require(pnl != 0);
        
         if (pnl < 0){
             
-            IBLPToken(rBLP).distributePnl(uint256(-rBLPPnl));
+            IBLPToken(tBLP).distributePnl(uint256(-tBLPPnl));
             
             IBLPToken(sBLP).distributePnl(uint256(-sBLPPnl));
             
         }
         else if (pnl > 0){
             
-            IBLPToken(rBLP).reclaimPnl(uint256(rBLPPnl));
+            IBLPToken(tBLP).reclaimPnl(uint256(tBLPPnl));
             IBLPToken(sBLP).reclaimPnl(uint256(sBLPPnl));
             
         }
         totalPnl += pnl;
         
-        emit PnLHandled(pnl, sBLPPnl, rBLPPnl);
+        emit PnLHandled(pnl, sBLPPnl, tBLPPnl);
     }
 
     function handleMarketPnl(address pool,bool isYes) external auth() {
@@ -815,7 +843,7 @@ contract tradeManager is Initializable {
         usdcToken.transferFrom(msg.sender,address(this),assets);
         IERC20(usdbTokenAddress).mint(address(this), assets);   
         if(isRisk){
-            IBLPToken(rBLP).deposit(assets, receiver);
+            IBLPToken(tBLP).deposit(assets, receiver);
         }
         else{
             IBLPToken(sBLP).deposit(assets, receiver);
@@ -825,7 +853,7 @@ contract tradeManager is Initializable {
         _withdrawcheck(assets);
 
         if(isRisk){
-            IBLPToken(rBLP).withdraw(assets, receiver, owner);
+            IBLPToken(tBLP).withdraw(assets, receiver, owner);
         }
         else{
             IBLPToken(sBLP).withdraw(assets, receiver, owner);

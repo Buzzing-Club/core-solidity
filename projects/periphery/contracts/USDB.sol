@@ -251,7 +251,7 @@ contract USDB is ERC20 {
         _burn(from, amount);
     }
 
-    function setVault(address _vault) public {
+    function setVault(address _vault) public onlyOwner {
         vault = _vault;
     }
     function deposit(address to, uint256 amount) public {

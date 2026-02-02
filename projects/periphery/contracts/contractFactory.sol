@@ -6,18 +6,18 @@ import './depositContract.sol';
 
 contract ContractFactory {
     address public owner;
-    address public BLPAddr;
+    address public usdbAddr;
     address public usdcAddr;
     Parameters public parameters;
     struct Parameters {
         address factoryOwner;
-        address BLPAddr;
+        address usdbAddr;
         address usdcAddr;
         address eoa;
     }
-    constructor(address _BLPAddr, address _usdcAddr) {
+    constructor(address _usdbAddr, address _usdcAddr) {
         owner = msg.sender;
-        BLPAddr = _BLPAddr;
+        usdbAddr = _usdbAddr;
         usdcAddr = _usdcAddr;
     }
 
@@ -29,8 +29,8 @@ contract ContractFactory {
     function deploy(
         address eoa
     ) external onlyOwner returns (address depositContractAddr) {
-        parameters = Parameters({factoryOwner: owner, BLPAddr: BLPAddr, usdcAddr: usdcAddr, eoa: eoa}); 
-        depositContractAddr = address(new DepositContract{salt: keccak256(abi.encode(usdcAddr, BLPAddr,eoa))}());
+        parameters = Parameters({factoryOwner: owner, usdbAddr: usdbAddr, usdcAddr: usdcAddr, eoa: eoa}); 
+        depositContractAddr = address(new DepositContract{salt: keccak256(abi.encode(usdcAddr, usdbAddr,eoa))}());
         delete parameters;
     }
 }

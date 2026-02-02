@@ -20,6 +20,7 @@ contract DynamicFeeManager {
     uint256 public variableFeeControl; // scaling factor for variable fee
     uint256 public baseFeeUnit;        // base fee per tick crossed (1e18 precision)
     address public tradeManager;
+    address public owner;
 
     constructor(
         uint256 _filterPeriod,
@@ -37,6 +38,7 @@ contract DynamicFeeManager {
         variableFeeControl = _variableFeeControl;
         baseFeeUnit = _baseFeeUnit;
         tradeManager = _tradeManager;
+        owner = msg.sender;
     }
 
     /**
@@ -107,5 +109,23 @@ contract DynamicFeeManager {
 
     function _abs(int256 x) internal pure returns (uint256) {
         return x >= 0 ? uint256(x) : uint256(-x);
+    }
+    function reset  (
+        uint256 _filterPeriod,
+        uint256 _decayPeriod,
+        uint256 _reductionFactor,
+        uint256 _maxAccumulator,
+        uint256 _variableFeeControl,    
+        uint256 _baseFeeUnit,
+        address _tradeManager
+    ) public {
+        require(msg.sender == owner, "Only owner can reset");
+        filterPeriod = _filterPeriod;
+        decayPeriod = _decayPeriod;
+        reductionFactor = _reductionFactor;
+        maxAccumulator = _maxAccumulator;
+        variableFeeControl = _variableFeeControl;
+        baseFeeUnit = _baseFeeUnit;
+        tradeManager = _tradeManager;
     }
 }

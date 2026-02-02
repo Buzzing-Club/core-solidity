@@ -68,6 +68,27 @@ contract NonfungiblePositionManager is
     /// @dev The address of the token descriptor contract, which handles generating token URIs for position tokens
     address private immutable _tokenDescriptor;
 
+    mapping (address => uint256) public wards;
+
+    // Admin
+    event Rely(address indexed usr);
+    event Deny(address indexed usr);
+
+    modifier auth {
+        require(wards[msg.sender] == 1, "NPM/not-authorized");
+        _;
+    }
+    // --- Admin external functions ---
+
+    function rely(address usr) external auth {
+        wards[usr] = 1;
+        emit Rely(usr);
+    }
+
+    function deny(address usr) external auth {
+        wards[usr] = 0;
+        emit Deny(usr);
+    }
     constructor(
         address _deployer,
         address _factory,
@@ -75,6 +96,7 @@ contract NonfungiblePositionManager is
         address _tokenDescriptor_
     ) ERC721Permit('Buzzing Swap Positions NFT-V1', 'Buzzing-Swap-POS', '1') PeripheryImmutableState(_deployer, _factory, _WETH9) {
         _tokenDescriptor = _tokenDescriptor_;
+        wards[msg.sender] = 1;
     }
 
     /// @inheritdoc INonfungiblePositionManager
@@ -131,6 +153,7 @@ contract NonfungiblePositionManager is
         payable
         override
         checkDeadline(params.deadline)
+        auth
         returns (
             uint256 tokenId,
             uint128 liquidity,

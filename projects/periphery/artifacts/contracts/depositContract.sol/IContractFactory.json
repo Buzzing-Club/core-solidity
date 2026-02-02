@@ -14,7 +14,7 @@
         },
         {
           "internalType": "address",
-          "name": "BLPAddr",
+          "name": "usdbAddr",
           "type": "address"
         },
         {

@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "IERC1155",
-  "sourceName": "contracts/Wrapped1155Factory.sol",
+  "sourceName": "@openzeppelin/contracts/token/ERC1155/IERC1155.sol",
   "abi": [
     {
       "anonymous": false,

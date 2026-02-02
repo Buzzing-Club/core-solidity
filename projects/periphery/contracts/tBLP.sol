@@ -60,7 +60,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
     // --- Modifiers ---
 
     modifier auth {
-        require(wards[msg.sender] == 1, "rBLP/not-authorized");
+        require(wards[msg.sender] == 1, "tBLP/not-authorized");
         _;
     }
     function _blockTimestamp() internal view virtual returns (uint256) {
@@ -84,7 +84,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
     // --- Upgradability ---
 
     function initialize(address _usdb) initializer external {
-        __ERC20_init('rBLP token', 'rBLP');
+        __ERC20_init('tBLP token', 'tBLP');
         __ERC4626_init(IERC20MetadataUpgradeable(_usdb));
         wards[msg.sender] = 1;
         usdb = UsdbLike(_usdb);

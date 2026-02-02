@@ -42,6 +42,7 @@ contract SwapRouter is
         owner = msg.sender;
     }
     function setVault (address _vault) public onlyOwner{
+        require(_vault != address(0), "vault is zero address");
         vaultaddress = _vault;
     }
     modifier onlyOwner() {
