@@ -546,9 +546,7 @@ contract tradeManager is Initializable {
         require(params.amountIn - amountOut < maxAmount,"too much usd");
         _updateExposure(pool);
         _exposureCheck();
-        pos.noTokenAmount -= params.amountIn;
-        uint256 costReduced = pos.usdSpent * params.amountIn / pos.noTokenAmount;
-        pos.usdSpent -= costReduced;
+
         emit BuyNo(params.amountIn, amountOut, pool , permitparams.owner);
     }
     function sellNo(ExactOutputSingleParams calldata params, 
@@ -640,6 +638,9 @@ contract tradeManager is Initializable {
         
         int256 pnl = ((int256(sellPrice) - int256(avgPrice)) * int256(amountIn)  / int256(PRECISION));
         _handlePnl(pnl + int256(LPfee));
+        pos.noTokenAmount -= params.amountOut;
+        uint256 costReduced = pos.usdSpent * params.amountOut / pos.noTokenAmount;
+        pos.usdSpent -= costReduced;
         emit SellNo(amountIn, params.amountOut, pool, permitparams.owner);
     }
     function _traderDeposit(address account,uint256 amount) internal{
