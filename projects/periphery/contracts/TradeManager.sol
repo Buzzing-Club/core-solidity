@@ -470,8 +470,8 @@ contract tradeManager is Initializable {
         int256 pnl = ((int256(sellPrice) - int256(avgPrice))  * int256(params.amountIn) / int256(PRECISION));
         
         _handlePnl(pnl + int256(LPfee)); 
-        pos.yesTokenAmount -= params.amountIn;
         uint256 costReduced = pos.usdSpent * params.amountIn / pos.yesTokenAmount;
+        pos.yesTokenAmount -= params.amountIn;
         pos.usdSpent -= costReduced;
         
         emit SellYes(params.amountIn, amountOut, pool, permitparams.owner);
@@ -638,8 +638,8 @@ contract tradeManager is Initializable {
         
         int256 pnl = ((int256(sellPrice) - int256(avgPrice)) * int256(amountIn)  / int256(PRECISION));
         _handlePnl(pnl + int256(LPfee));
-        pos.noTokenAmount -= params.amountOut;
         uint256 costReduced = pos.usdSpent * params.amountOut / pos.noTokenAmount;
+        pos.noTokenAmount -= params.amountOut;
         pos.usdSpent -= costReduced;
         emit SellNo(amountIn, params.amountOut, pool, permitparams.owner);
     }
