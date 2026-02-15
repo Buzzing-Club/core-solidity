@@ -232,6 +232,7 @@ contract tradeManager is Initializable {
     address public feeAdapter;
     address public feeManager;
     address public yieldProtocol;
+    address public erc1155Factory;
     uint256 public yieldPrincipal;
     uint256 public yieldPrincipalUsed;
     int256 public totalExposure;
@@ -254,6 +255,7 @@ contract tradeManager is Initializable {
     mapping(address => mapping(address => UserYesPosition)) public userYesPositions; // user => pool => position
     mapping(address => mapping(address => UserNoPosition)) public userNoPositions;   // user => pool => position
     mapping(address => uint256) public reportedCounts;
+    mapping(address => address) public refers;
     //vault
     address public tBLP;
     address public sBLP;
@@ -279,7 +281,7 @@ contract tradeManager is Initializable {
     uint256 reportIndex
 );
     event SetRiskThreshold(int256 threshold);
-    
+    event ReferSet(address indexed user, address indexed referrer);
 
     // --- Modifiers ---
 
@@ -318,12 +320,13 @@ contract tradeManager is Initializable {
     }
     // --- Upgradability ---
 
-    function initialize(address _usdb , address _usdcTokenAddress, address _NonfungiblePositionManager, address _ctf, address _swaprouter,address _tBLP,address _sBLP) initializer external {
+    function initialize(address _usdb , address _usdcTokenAddress, address _NonfungiblePositionManager, address _ctf, address _swaprouter,address _tBLP,address _sBLP,address _erc1155Factory) initializer external {
         wards[msg.sender] = 1;
         usdb = UsdbLike(_usdb);
         
         usdbTokenAddress = _usdb;
         usdc = IERC20(_usdcTokenAddress);
+        erc1155Factory = _erc1155Factory;
         NonfungiblePositionManager = _NonfungiblePositionManager;
         ctfAddress = _ctf;
         SwapRouter = _swaprouter;
@@ -351,7 +354,7 @@ contract tradeManager is Initializable {
             uint256 amount1
         )
     {
-
+        require(ERC1155Factory == erc1155Factory,"invalid factory");
         _exposureCheck();
         IERC20(usdbTokenAddress).mint(address(this), splitPositionParmas.amount);   
         IERC20(splitPositionParmas.collateralToken).approve(ctfAddress, type(uint256).max);
@@ -449,9 +452,10 @@ contract tradeManager is Initializable {
         //base fee for roles
         IERC20(usdbTokenAddress).transfer(permitparams.owner, amountOut - totalFeeAmount - dynamicfee);
         IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount + dynamicfee);
+        referrer = refers[permitparams.owner];
         IFeeAdapter(feeAdapter).recordFee(pool, referrer, usdbTokenAddress, totalFeeAmount + dynamicfee);
         sellYesAmount[pool] = sellYesAmount[pool] +  params.amountIn;
-        sellYesUSD[pool] = sellYesUSD[pool] +  amountOut - totalFeeAmount - dynamicfee;
+        sellYesUSD[pool] = sellYesUSD[pool] +  amountOut ;
         require(amountOut >= minAmount,"usd not enough");
        
         //LPfee
@@ -488,23 +492,17 @@ contract tradeManager is Initializable {
                    Permit calldata permitparams) 
                    external 
     {
-
+        require(ERC1155Factory == erc1155Factory,"invalid factory");
         _checkPool(pool);
         _traderDeposit(address(this), params.amountIn);
-        //tokenIn always usd
+        //tokenIn always not usd
         require(params.tokenIn != usdbTokenAddress);
         IERC20(usdbTokenAddress).approve(ctfAddress, type(uint256).max);
         CTF(ctfAddress).splitPosition(splitPositionParmas.collateralToken, 
                                       splitPositionParmas.parentCollectionId, 
                                       splitPositionParmas.conditionId, 
                                       splitPositionParmas.partition, 
-                                      splitPositionParmas.amount);
-        //transfer no to user
-        // CTF(ctfAddress).safeTransferFrom(address(this), 
-        //                                  msg.sender, 
-        //                                  noPositionId, 
-        //                                  splitPositionParmas.amount, 
-        //                                  "");       
+                                      splitPositionParmas.amount); 
         //transfer no to factory to get erc20
         CTF(ctfAddress).safeTransferFrom(transferParmas.from, 
                                          transferParmas.to, 
@@ -559,6 +557,7 @@ contract tradeManager is Initializable {
                     address referrer,
                     Permit calldata permitparams) external 
     {
+        require(ERC1155Factory == erc1155Factory,"invalid factory");
         _checkPool(pool);
         _traderDeposit(address(this), params.amountOut);
         //mint usdb for ctf
@@ -616,10 +615,11 @@ contract tradeManager is Initializable {
         IERC20(usdbTokenAddress).transfer(permitparams.owner, params.amountOut - amountIn - totalFeeAmount - dynamicfee);
         //fee transfer
         IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount + dynamicfee);
+        referrer = refers[permitparams.owner];
         IFeeAdapter(feeAdapter).recordFee(pool, referrer, usdbTokenAddress, totalFeeAmount + dynamicfee);
         sellNoAmount[pool] = sellNoAmount[pool] +  params.amountOut;
         
-        sellNoUSD[pool] = sellNoUSD[pool] +  params.amountOut - amountIn - totalFeeAmount - dynamicfee;
+        sellNoUSD[pool] = sellNoUSD[pool] +  params.amountOut - amountIn;
        
         _updateExposure(pool);
         _exposureCheck();
@@ -774,13 +774,7 @@ contract tradeManager is Initializable {
         marketExposure[pool] = exposureafter; 
 
     }
-    function _checkpool(address pool) internal {
-        int256 exposurebefore = marketExposure[pool];
-        totalExposure -= exposurebefore;
-        int256 exposureafter = _exposureCalculate(pool);
-        totalExposure += exposureafter;
-        marketExposure[pool] = exposureafter; 
-    }
+    
     function _availableFunds() internal returns (int256) {
         uint256 shares = IYieldProtocol(yieldProtocol).balanceOf(address(this)); 
 
@@ -864,5 +858,13 @@ contract tradeManager is Initializable {
     function _withdrawcheck(uint256 assets) internal {
         int256 dynamicReservedFunds = RiskCoefficient / 1e18 * _availableFunds();
         require(dynamicReservedFunds - int256(assets) > totalExposure,'wdc');
+    }
+    function setRefer(address user, address referrer) external auth {
+        require(user != address(0), "Invalid user");
+        require(referrer != address(0), "Invalid referrer");
+
+        refers[user] = referrer;
+
+        emit ReferSet(user, referrer);
     }
 }

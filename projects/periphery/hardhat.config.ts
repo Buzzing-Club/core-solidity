@@ -241,6 +241,7 @@ export default {
       'contracts/Hashes.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/MerkleProof.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/CumulativeMerkleClaim.sol':SUSDBVAULT_COMPILER_SETTINGS,
+      'contracts/DynamicFeeManagerTest.sol':SUSDBVAULT_COMPILER_SETTINGS,
     },
   },
   watcher: {

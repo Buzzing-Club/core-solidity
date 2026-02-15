@@ -61,7 +61,7 @@ contract BuzzingSwapFactory is IBuzzingSwapFactory {
         address tokenA,
         address tokenB,
         uint24 fee
-    ) external override returns (address pool) {
+    ) external override onlyOwner returns (address pool) {
         require(tokenA != tokenB);
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         require(token0 != address(0));

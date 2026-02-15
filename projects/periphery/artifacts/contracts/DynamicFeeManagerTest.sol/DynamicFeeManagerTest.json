@@ -1,0 +1,329 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "DynamicFeeManagerTest",
+  "sourceName": "contracts/DynamicFeeManagerTest.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "baseFeeUnit",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ticksCrossed",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tradeSize",
+          "type": "uint256"
+        }
+      ],
+      "name": "computeFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "fee",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "ticksCrossed",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tradeSize",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "accumulator",
+          "type": "uint256"
+        }
+      ],
+      "name": "computeFeePure",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "fee",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "decayPeriod",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "filterPeriod",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "maxAccumulator",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "poolVolatility",
+      "outputs": [
+        {
+          "internalType": "int24",
+          "name": "referenceTick",
+          "type": "int24"
+        },
+        {
+          "internalType": "uint256",
+          "name": "referenceVolatility",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastUpdate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "accumulator",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "reductionFactor",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "accumulator",
+          "type": "uint256"
+        }
+      ],
+      "name": "setAccumulator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastUpdate",
+          "type": "uint256"
+        }
+      ],
+      "name": "setLastUpdate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_filterPeriod",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_decayPeriod",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_reductionFactor",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxAccumulator",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_variableFeeControl",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_baseFeeUnit",
+          "type": "uint256"
+        }
+      ],
+      "name": "setParams",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "int24",
+          "name": "referenceTick",
+          "type": "int24"
+        },
+        {
+          "internalType": "uint256",
+          "name": "referenceVolatility",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "accumulator",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastUpdate",
+          "type": "uint256"
+        }
+      ],
+      "name": "setPoolState",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "int24",
+          "name": "currentTick",
+          "type": "int24"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ticksCrossed",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateVolatility",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "variableFeeControl",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080806040523461002857600780546001600160a01b0319163317905561068a908161002e8239f35b600080fdfe608060408181526004918236101561001657600080fd5b600092833560e01c91826312b89cbe1461056257508163166f94ad14610544578163439bc950146104fc57816348d67e1b146104dd578163613f8274146104955781636378eba31461047657816365d4e4041461040d5781637e2662f5146103ee5781638da5cb5b146103c55781638ddae1141461036057816395acf6de1461021b578163c6db3b4f146101fc578163e190740b14610138578163ebb39512146100eb575063f811c1dd146100ca57600080fd5b346100e757816003193601126100e7576020906005549051908152f35b5080fd5b8390346100e75760c03660031901126100e75761011360018060a01b036007541633146105e5565b8035600155602435600255604435600355606435905560843560055560a43560065580f35b8383346100e75760a03660031901126100e7576101536105ba565b61015b6105d5565b60075490926001600160a01b039161017690831633146105e5565b8051936080850185811067ffffffffffffffff8211176101e957600395969750825260020b85526020850190604435825280860192608435845260608701946064358652168752866020528620945162ffffff198654169062ffffff161785555160018501555160028401555191015580f35b634e487b7160e01b875260418852602487fd5b5050346100e757816003193601126100e7576020906001549051908152f35b90503461035c57606036600319011261035c576102366105ba565b9161023f6105d5565b9260018060a01b03168452836020528320600281019283544203428111610349576001548111610333575b60025481111561030557508460018301555b815460020b9060020b908582820392128183128116918313901516176102f2578481126102dc576102be905b6102b9604435916001850154610647565b610647565b91548083116102d3575b506003015542905580f35b915060036102c8565b600160ff1b81146102f2576102be9085036102a8565b634e487b7160e01b855260118352602485fd5b600154101561027c57670de0b6b3a764000061032860038401546003549061061e565b04600183015561027c565b62ffffff198354168262ffffff1617835561026a565b634e487b7160e01b865260118452602486fd5b8280fd5b8284346103c25760603660031901126103c257506103bb6020926103a66103b460443592670de0b6b3a76400009283916103a160243591600654903561061e565b61061e565b04926103a18160055461061e565b0490610647565b9051908152f35b80fd5b5050346100e757816003193601126100e75760075490516001600160a01b039091168152602090f35b5050346100e757816003193601126100e7576020906006549051908152f35b5050346100e75760603660031901126100e7576020916103bb9082906001600160a01b036104396105ba565b16815280855220670de0b6b3a76400006103b4816104626006546103a16044359160243561061e565b04926103a16003600554920154809261061e565b5050346100e757816003193601126100e7576020906003549051908152f35b5050346100e757806003193601126100e7576104af6105ba565b6007546001600160a01b0391906104c990831633146105e5565b168252816020526003602435918320015580f35b5050346100e757816003193601126100e7576020906002549051908152f35b5050346100e757806003193601126100e7576105166105ba565b6007546001600160a01b03919061053090831633146105e5565b168252816020526002602435918320015580f35b90503461035c578260031936011261035c5760209250549051908152f35b8490843461035c57602036600319011261035c5760809281906001600160a01b0361058b6105ba565b16815280602052208054916001820154600360028401549301549360020b855260208501528301526060820152f35b600435906001600160a01b03821682036105d057565b600080fd5b602435908160020b82036105d057565b156105ec57565b60405162461bcd60e51b815260206004820152600a60248201526927b7363c9037bbb732b960b11b6044820152606490fd5b8181029291811591840414171561063157565b634e487b7160e01b600052601160045260246000fd5b919082018092116106315756fea2646970667358221220a5af40f47d05ff5e7eaaf746fc705c46a201ea197b445cd6abeb715c4e8f920864736f6c63430008140033",
+  "deployedBytecode": "0x608060408181526004918236101561001657600080fd5b600092833560e01c91826312b89cbe1461056257508163166f94ad14610544578163439bc950146104fc57816348d67e1b146104dd578163613f8274146104955781636378eba31461047657816365d4e4041461040d5781637e2662f5146103ee5781638da5cb5b146103c55781638ddae1141461036057816395acf6de1461021b578163c6db3b4f146101fc578163e190740b14610138578163ebb39512146100eb575063f811c1dd146100ca57600080fd5b346100e757816003193601126100e7576020906005549051908152f35b5080fd5b8390346100e75760c03660031901126100e75761011360018060a01b036007541633146105e5565b8035600155602435600255604435600355606435905560843560055560a43560065580f35b8383346100e75760a03660031901126100e7576101536105ba565b61015b6105d5565b60075490926001600160a01b039161017690831633146105e5565b8051936080850185811067ffffffffffffffff8211176101e957600395969750825260020b85526020850190604435825280860192608435845260608701946064358652168752866020528620945162ffffff198654169062ffffff161785555160018501555160028401555191015580f35b634e487b7160e01b875260418852602487fd5b5050346100e757816003193601126100e7576020906001549051908152f35b90503461035c57606036600319011261035c576102366105ba565b9161023f6105d5565b9260018060a01b03168452836020528320600281019283544203428111610349576001548111610333575b60025481111561030557508460018301555b815460020b9060020b908582820392128183128116918313901516176102f2578481126102dc576102be905b6102b9604435916001850154610647565b610647565b91548083116102d3575b506003015542905580f35b915060036102c8565b600160ff1b81146102f2576102be9085036102a8565b634e487b7160e01b855260118352602485fd5b600154101561027c57670de0b6b3a764000061032860038401546003549061061e565b04600183015561027c565b62ffffff198354168262ffffff1617835561026a565b634e487b7160e01b865260118452602486fd5b8280fd5b8284346103c25760603660031901126103c257506103bb6020926103a66103b460443592670de0b6b3a76400009283916103a160243591600654903561061e565b61061e565b04926103a18160055461061e565b0490610647565b9051908152f35b80fd5b5050346100e757816003193601126100e75760075490516001600160a01b039091168152602090f35b5050346100e757816003193601126100e7576020906006549051908152f35b5050346100e75760603660031901126100e7576020916103bb9082906001600160a01b036104396105ba565b16815280855220670de0b6b3a76400006103b4816104626006546103a16044359160243561061e565b04926103a16003600554920154809261061e565b5050346100e757816003193601126100e7576020906003549051908152f35b5050346100e757806003193601126100e7576104af6105ba565b6007546001600160a01b0391906104c990831633146105e5565b168252816020526003602435918320015580f35b5050346100e757816003193601126100e7576020906002549051908152f35b5050346100e757806003193601126100e7576105166105ba565b6007546001600160a01b03919061053090831633146105e5565b168252816020526002602435918320015580f35b90503461035c578260031936011261035c5760209250549051908152f35b8490843461035c57602036600319011261035c5760809281906001600160a01b0361058b6105ba565b16815280602052208054916001820154600360028401549301549360020b855260208501528301526060820152f35b600435906001600160a01b03821682036105d057565b600080fd5b602435908160020b82036105d057565b156105ec57565b60405162461bcd60e51b815260206004820152600a60248201526927b7363c9037bbb732b960b11b6044820152606490fd5b8181029291811591840414171561063157565b634e487b7160e01b600052601160045260246000fd5b919082018092116106315756fea2646970667358221220a5af40f47d05ff5e7eaaf746fc705c46a201ea197b445cd6abeb715c4e8f920864736f6c63430008140033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

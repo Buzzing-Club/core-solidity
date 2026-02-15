@@ -3,7 +3,7 @@ pragma solidity =0.7.6;
 
 
 import './depositContract.sol';
-
+import 'hardhat/console.sol';
 contract ContractFactory {
     address public owner;
     address public usdbAddr;
@@ -31,6 +31,7 @@ contract ContractFactory {
     ) external onlyOwner returns (address depositContractAddr) {
         parameters = Parameters({factoryOwner: owner, usdbAddr: usdbAddr, usdcAddr: usdcAddr, eoa: eoa}); 
         depositContractAddr = address(new DepositContract{salt: keccak256(abi.encode(usdcAddr, usdbAddr,eoa))}());
+        console.log("depositContractAddr:", depositContractAddr);
         delete parameters;
     }
 }

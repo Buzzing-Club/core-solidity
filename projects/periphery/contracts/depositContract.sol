@@ -2,9 +2,11 @@
 pragma solidity =0.7.6;
 interface IUSDB{
     function deposit(address account, uint256 amount) external;
+    
 }
 interface IERC20{
     function balanceOf(address account) external returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
 }
 interface IContractFactory{
     function parameters()
@@ -32,6 +34,7 @@ contract DepositContract {
     }
     function deposit(address to) external onlyFactoryOnwer {
         uint256 amount = IERC20(usdcAddr).balanceOf(address(this));
+        IERC20(usdcAddr).approve(usdbAddr, amount);
         IUSDB(usdbAddr).deposit(to, amount);
     }
 }

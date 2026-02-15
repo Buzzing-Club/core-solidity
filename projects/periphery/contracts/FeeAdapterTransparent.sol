@@ -129,6 +129,12 @@ contract FeeAdapterTransparent is Initializable {
 
             emit FeeRecorded(refer, "REFERRAL", referAmount, pool);
         }
+        else {
+            uint256 referAmount = (totalFeeAmount * referRatio) / totalRatio;
+            pendingBalances[owner][token] += referAmount;
+
+            emit FeeRecorded(owner, "REFERRAL", referAmount, pool);
+        }
     }
 
 
