@@ -319,7 +319,10 @@ contract tradeManager is Initializable {
         emit SetRiskThreshold(riskThreshold);
     }
     // --- Upgradability ---
-
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers(); // Avoid initializing in the context of the implementation
+    }
     function initialize(address _usdb , address _usdcTokenAddress, address _NonfungiblePositionManager, address _ctf, address _swaprouter,address _tBLP,address _sBLP,address _erc1155Factory) initializer external {
         wards[msg.sender] = 1;
         usdb = UsdbLike(_usdb);
@@ -817,7 +820,7 @@ contract tradeManager is Initializable {
         
         uint256 shares = IYieldProtocol(yieldProtocol).balanceOf(address(this)); 
         uint256 assets = IYieldProtocol(yieldProtocol).convertToAssets(shares);
-        int256 interest = int256(assets - yieldPrincipalUsed);
+        int256 interest = int256(assets) - int256(yieldPrincipalUsed);
         yieldPrincipalUsed = assets;
         yieldInterest += uint256(interest);
         _handlePnl(-interest);
@@ -856,7 +859,7 @@ contract tradeManager is Initializable {
         
     }
     function _withdrawcheck(uint256 assets) internal {
-        int256 dynamicReservedFunds = RiskCoefficient / 1e18 * _availableFunds();
+        int256 dynamicReservedFunds = RiskCoefficient  * _availableFunds() / 1e18;
         require(dynamicReservedFunds - int256(assets) > totalExposure,'wdc');
     }
     function setRefer(address user, address referrer) external auth {

@@ -12,6 +12,7 @@ contract PreTrading {
     address public owner;
 
     uint256 public constant WITHDRAW_FEE_BPS = 500; // 5%
+    uint256 public constant PROFIT_FEE_BPS = 500; // 5%
     uint256 public constant BPS_DENOM = 10_000;
     uint256 public constant WITHDRAW_DELAY = 1 days;
 
@@ -32,8 +33,13 @@ contract PreTrading {
     struct Position {
         uint256 yesUSDAmount;
         uint256 noUSDAmount;
-        uint256 pendingWithdraw;
-        uint256 withdrawAvailableAt;
+
+        uint256 yesPendingWithdraw;
+        uint256 noPendingWithdraw;
+
+        uint256 yesWithdrawAvailableAt;
+        uint256 noWithdrawAvailableAt;
+
         bool claimed;
     }
 
@@ -43,7 +49,8 @@ contract PreTrading {
         bytes32 indexed conditionId,
         address indexed user,
         bool isYes,
-        uint256 amount
+        uint256 amount,
+        uint256 totalUSD
     );
 
     event WithdrawRequested(
@@ -64,6 +71,7 @@ contract PreTrading {
     event WithdrawClaimed(
         bytes32 indexed conditionId,
         address indexed user,
+        bool isYes,
         uint256 amount,
         uint256 fee
     );
@@ -80,7 +88,8 @@ contract PreTrading {
     );
 
     event MarketTerminated(
-        bytes32 indexed conditionId
+        bytes32 indexed conditionId,
+        uint256 totalUSD
     );
 
     event FeeWithdrawn(
@@ -143,13 +152,15 @@ contract PreTrading {
         }
 
         totalUSD[conditionId] += amount;
-
+        
+        emit Deposit(conditionId, msg.sender, isYes, amount,totalUSD[conditionId]);
+        
         if (totalUSD[conditionId] >= marketTransferThreshold) {
             marketStatus[conditionId] = MarketStatus.TERMINATED;
-            emit MarketTerminated(conditionId);
+            emit MarketTerminated(conditionId,totalUSD[conditionId]);
         }
 
-        emit Deposit(conditionId, msg.sender, isYes, amount);
+        
     }
 
     function withdraw(bytes32 conditionId, bool isYes, uint256 amount) external {
@@ -157,79 +168,111 @@ contract PreTrading {
         require(amount > 0, "Zero amount");
 
         Position storage p = positions[conditionId][msg.sender];
+        uint256 availableAt = block.timestamp + WITHDRAW_DELAY;
 
         if (isYes) {
             require(p.yesUSDAmount >= amount, "Insufficient YES");
+
             p.yesUSDAmount -= amount;
             totalYesUSD[conditionId] -= amount;
+
+            p.yesPendingWithdraw += amount;
+
+            if (availableAt > p.yesWithdrawAvailableAt) {
+                p.yesWithdrawAvailableAt = availableAt;
+            }
+
+            emit WithdrawRequested(conditionId, msg.sender, true, amount, p.yesWithdrawAvailableAt);
+
         } else {
             require(p.noUSDAmount >= amount, "Insufficient NO");
+
             p.noUSDAmount -= amount;
             totalNoUSD[conditionId] -= amount;
+
+            p.noPendingWithdraw += amount;
+
+            if (availableAt > p.noWithdrawAvailableAt) {
+                p.noWithdrawAvailableAt = availableAt;
+            }
+
+            emit WithdrawRequested(conditionId, msg.sender, false, amount, p.noWithdrawAvailableAt);
         }
 
         totalUSD[conditionId] -= amount;
-
-        p.pendingWithdraw += amount;
-
-        uint256 availableAt = block.timestamp + WITHDRAW_DELAY;
-
-        if (availableAt > p.withdrawAvailableAt) {
-            p.withdrawAvailableAt = availableAt;
-        }
-
-        emit WithdrawRequested(
-            conditionId,
-            msg.sender,
-            isYes,
-            amount,
-            p.withdrawAvailableAt
-        );
     }
+
 
     function cancelWithdraw(bytes32 conditionId, bool isYes) external {
         Position storage p = positions[conditionId][msg.sender];
 
-        require(p.pendingWithdraw > 0, "No pending withdraw");
-        require(block.timestamp < p.withdrawAvailableAt, "Already claimable");
-
-        uint256 amount = p.pendingWithdraw;
-
         if (isYes) {
+            require(p.yesPendingWithdraw > 0, "No YES pending");
+            require(block.timestamp < p.yesWithdrawAvailableAt, "Already claimable");
+
+            uint256 amount = p.yesPendingWithdraw;
+
             p.yesUSDAmount += amount;
             totalYesUSD[conditionId] += amount;
+            totalUSD[conditionId] += amount;
+
+            p.yesPendingWithdraw = 0;
+            p.yesWithdrawAvailableAt = 0;
+
+            emit WithdrawCancelled(conditionId, msg.sender, true, amount);
+
         } else {
+            require(p.noPendingWithdraw > 0, "No NO pending");
+            require(block.timestamp < p.noWithdrawAvailableAt, "Already claimable");
+
+            uint256 amount = p.noPendingWithdraw;
+
             p.noUSDAmount += amount;
             totalNoUSD[conditionId] += amount;
+            totalUSD[conditionId] += amount;
+
+            p.noPendingWithdraw = 0;
+            p.noWithdrawAvailableAt = 0;
+
+            emit WithdrawCancelled(conditionId, msg.sender, false, amount);
         }
-
-        totalUSD[conditionId] += amount;
-
-        p.pendingWithdraw = 0;
-        p.withdrawAvailableAt = 0;
-
-        emit WithdrawCancelled(conditionId, msg.sender, isYes, amount);
     }
 
-    function claimWithdraw(bytes32 conditionId) external {
+    function claimWithdraw(bytes32 conditionId, bool isYes) external {
         Position storage p = positions[conditionId][msg.sender];
 
-        require(p.pendingWithdraw > 0, "Nothing to claim");
-        require(block.timestamp >= p.withdrawAvailableAt, "Too early");
+        uint256 amount;
+        uint256 availableAt;
 
-        uint256 amount = p.pendingWithdraw;
+        if (isYes) {
+            amount = p.yesPendingWithdraw;
+            availableAt = p.yesWithdrawAvailableAt;
+
+            require(amount > 0, "No YES pending");
+            require(block.timestamp >= availableAt, "Too early");
+
+            p.yesPendingWithdraw = 0;
+            p.yesWithdrawAvailableAt = 0;
+
+        } else {
+            amount = p.noPendingWithdraw;
+            availableAt = p.noWithdrawAvailableAt;
+
+            require(amount > 0, "No NO pending");
+            require(block.timestamp >= availableAt, "Too early");
+
+            p.noPendingWithdraw = 0;
+            p.noWithdrawAvailableAt = 0;
+        }
 
         uint256 fee = (amount * WITHDRAW_FEE_BPS) / BPS_DENOM;
         uint256 receiveAmount = amount - fee;
 
         marketFeeUSD += fee;
 
-        p.pendingWithdraw = 0;
-        p.withdrawAvailableAt = 0;
-
         require(usdc.transfer(msg.sender, receiveAmount), "Transfer failed");
 
-        emit WithdrawClaimed(conditionId, msg.sender, receiveAmount, fee);
+        emit WithdrawClaimed(conditionId, msg.sender, isYes, receiveAmount, fee);
     }
 
     /* ===================================================== */
@@ -256,24 +299,52 @@ contract PreTrading {
         Position storage p = positions[conditionId][msg.sender];
         require(!p.claimed, "Already claimed");
 
-        uint256 payout;
+        uint256 grossPayout;
+        uint256 principal;
+        uint256 profit;
+        uint256 fee;
+        uint256 netPayout;
 
         if (marketResult[conditionId] == MarketResult.YES) {
+
             require(p.yesUSDAmount > 0, "No winning position");
-            payout = (p.yesUSDAmount * totalUSD[conditionId]) / totalYesUSD[conditionId];
+
+            principal = p.yesUSDAmount;
+
+            grossPayout = (principal * totalUSD[conditionId]) / totalYesUSD[conditionId];
+
             p.yesUSDAmount = 0;
+
         } else {
+
             require(p.noUSDAmount > 0, "No winning position");
-            payout = (p.noUSDAmount * totalUSD[conditionId]) / totalNoUSD[conditionId];
+
+            principal = p.noUSDAmount;
+
+            grossPayout = (principal * totalUSD[conditionId]) / totalNoUSD[conditionId];
+
             p.noUSDAmount = 0;
+        }
+
+        
+        if (grossPayout > principal) {
+            profit = grossPayout - principal;
+            fee = (profit * PROFIT_FEE_BPS) / BPS_DENOM; // 5%
+            netPayout = grossPayout - fee;
+
+            marketFeeUSD += fee;
+        } else {
+            
+            netPayout = grossPayout;
         }
 
         p.claimed = true;
 
-        require(usdc.transfer(msg.sender, payout), "Transfer failed");
+        require(usdc.transfer(msg.sender, netPayout), "Transfer failed");
 
-        emit Claimed(conditionId, msg.sender, payout);
+        emit Claimed(conditionId, msg.sender, netPayout);
     }
+
 
     /* ===================================================== */
     /* ===================== OWNER ========================= */

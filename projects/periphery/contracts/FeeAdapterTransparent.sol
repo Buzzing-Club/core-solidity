@@ -1,9 +1,16 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
+import "./openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+interface IERC20{
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function burn(address from, uint256 amount) external;
+    function mint(address to, uint256 amount) external;
+    function balanceOf(address to) external returns (uint256);
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
+}
 contract FeeAdapterTransparent is Initializable {
     address public owner;
     address public vault;
@@ -33,7 +40,10 @@ contract FeeAdapterTransparent is Initializable {
 
     /// @notice Emitted when a user claims their fee
     event FeeClaimed(address indexed user, address indexed token, uint256 amount);
-
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers(); // Avoid initializing in the context of the implementation
+    }
     /// @notice initialize function to replace constructor
     function initialize(address _vault) public initializer {
         require(_vault != address(0), "Invalid vault address");

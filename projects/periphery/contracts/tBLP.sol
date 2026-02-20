@@ -79,8 +79,10 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
         require(shareToAssetsPrice != 0, "shareToAssetsPrice is zero");
         require(assetsOrShares != 0, "assetsOrShares is zero");
     }
-
-
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers(); // Avoid initializing in the context of the implementation
+    }
     // --- Upgradability ---
 
     function initialize(address _usdb) initializer external {
