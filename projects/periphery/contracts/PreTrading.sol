@@ -80,7 +80,10 @@ contract PreTrading {
         bytes32 indexed conditionId,
         MarketResult result
     );
-
+    event MarketUnset(
+        bytes32 indexed conditionId,
+        MarketStatus status
+    );
     event Claimed(
         bytes32 indexed conditionId,
         address indexed user,
@@ -280,13 +283,19 @@ contract PreTrading {
     /* ===================================================== */
 
     function resolveMarket(bytes32 conditionId, MarketResult result) external onlyOracle {
-        require(marketStatus[conditionId] == MarketStatus.OPEN, "Market not open");
-        require(result == MarketResult.YES || result == MarketResult.NO, "Invalid");
+        //require(marketStatus[conditionId] == MarketStatus.OPEN, "Market not open");
+        //require(result == MarketResult.YES || result == MarketResult.NO, "Invalid");
 
         marketStatus[conditionId] = MarketStatus.RESOLVED;
         marketResult[conditionId] = result;
 
         emit MarketResolved(conditionId, result);
+    }
+    function unsetMarket(bytes32 conditionId, MarketStatus status) external onlyOracle {
+
+        marketStatus[conditionId] = status;
+
+        emit MarketUnset(conditionId, status);
     }
 
     /* ===================================================== */

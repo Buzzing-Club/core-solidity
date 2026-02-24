@@ -153,7 +153,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
     // Override ERC-4626 interactions (call scaleVariables on every deposit / withdrawal)
     function deposit(uint256 assets, address receiver) public override checks(assets) returns (uint256) {
         if (assets > maxDeposit(receiver)) revert ERC4626ExceededMaxDeposit();
-
+        if (_msgSender() != pnlHandler) revert OnlyTradingPnlHandler();
         uint256 shares = previewDeposit(assets);
         scaleVariables(shares, assets, true);
         //totalDeposited += assets;
@@ -163,7 +163,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
 
     function mint(uint256 shares, address receiver) public override checks(shares) returns (uint256) {
         if (shares > maxMint(receiver)) revert ERC4626ExceededMaxMint();
-
+        if (_msgSender() != pnlHandler) revert OnlyTradingPnlHandler();
         uint256 assets = previewMint(shares);
         scaleVariables(shares, assets, true);
         //totalDeposited += assets;
@@ -177,7 +177,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
         address owner
     ) public override checks(assets) returns (uint256) {
         if (assets > maxWithdraw(owner)) revert ERC4626ExceededMaxWithdraw();
-
+        if (_msgSender() != pnlHandler) revert OnlyTradingPnlHandler();
         uint256 shares = previewWithdraw(assets);
 
         scaleVariables(shares, assets, false);
@@ -188,7 +188,7 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
 
     function redeem(uint256 shares, address receiver, address owner) public override checks(shares) returns (uint256) {
         if (shares > maxRedeem(owner)) revert ERC4626ExceededMaxRedeem();
-
+        if (_msgSender() != pnlHandler) revert OnlyTradingPnlHandler();
         uint256 assets = previewRedeem(shares);
         scaleVariables(shares, assets, false);
         //totalDeposited -= assets;

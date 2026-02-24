@@ -224,6 +224,7 @@ contract tradeManager is Initializable {
 
     UsdbLike public usdb;
     // Buzzing
+    bytes32 internal constant POOL_INIT_CODE_HASH = 0xd0994b279f6cb816ee7d1763d7420e40973803132c6737b74c0734eb4837d2f0;
     uint256 public constant FEE_SCALE = 1_000_000;
     address public NonfungiblePositionManager;
     address public SwapRouter;
@@ -233,6 +234,7 @@ contract tradeManager is Initializable {
     address public feeManager;
     address public yieldProtocol;
     address public erc1155Factory;
+    address public deployer;
     uint256 public yieldPrincipal;
     uint256 public yieldPrincipalUsed;
     int256 public totalExposure;
@@ -323,7 +325,7 @@ contract tradeManager is Initializable {
     constructor() {
         _disableInitializers(); // Avoid initializing in the context of the implementation
     }
-    function initialize(address _usdb , address _usdcTokenAddress, address _NonfungiblePositionManager, address _ctf, address _swaprouter,address _tBLP,address _sBLP,address _erc1155Factory) initializer external {
+    function initialize(address _usdb , address _usdcTokenAddress, address _NonfungiblePositionManager, address _ctf, address _swaprouter,address _tBLP,address _sBLP,address _erc1155Factory,address _deployer) initializer external {
         wards[msg.sender] = 1;
         usdb = UsdbLike(_usdb);
         
@@ -335,6 +337,7 @@ contract tradeManager is Initializable {
         SwapRouter = _swaprouter;
         tBLP = _tBLP;
         sBLP = _sBLP;
+        deployer = _deployer;
         PRECISION = 1e18;
         reportCount = 2;
         RiskCoefficient = 9 * 1e17;
@@ -389,14 +392,14 @@ contract tradeManager is Initializable {
         emit IncreaseLiquidity(tokenId, liquidity, amount0, amount1);
         
     }
-    function decreaseLiquidity(DecreaseLiquidityParams calldata params)
-        external
+    function decreaseLiquidity(DecreaseLiquidityParams calldata params) external auth()
     {
         INonfungiblePositionManager(NonfungiblePositionManager).decreaseLiquidity(params);
     
     }
 
     function buyYes(ExactInputSingleParams calldata params, address pool, uint256 minAmount,address receiver,Permit calldata permitparams) external {
+        _checkaddress(pool,params.tokenIn,params.tokenOut,params.fee);
         _checkPool(pool);
         if(permitparams.owner != msg.sender){
             //permit for usdb transferFrom
@@ -424,6 +427,7 @@ contract tradeManager is Initializable {
 
     function sellYes(ExactInputSingleParams calldata params, address pool, uint256 minAmount,address referrer,Permit calldata permitparams) external {
         //tokenIn always wrapped1155
+        _checkaddress(pool,params.tokenIn,params.tokenOut,params.fee);
         _checkPool(pool);
         if(permitparams.owner != msg.sender){
             //permit for yestoken transferFrom
@@ -496,6 +500,7 @@ contract tradeManager is Initializable {
                    external 
     {
         require(ERC1155Factory == erc1155Factory,"invalid factory");
+        _checkaddress(pool,params.tokenIn,params.tokenOut,params.fee);
         _checkPool(pool);
         _traderDeposit(address(this), params.amountIn);
         //tokenIn always not usd
@@ -507,7 +512,7 @@ contract tradeManager is Initializable {
                                       splitPositionParmas.partition, 
                                       splitPositionParmas.amount); 
         //transfer no to factory to get erc20
-        CTF(ctfAddress).safeTransferFrom(transferParmas.from, 
+        CTF(ctfAddress).safeTransferFrom(address(this), 
                                          transferParmas.to, 
                                          noPositionId, 
                                          splitPositionParmas.amount, 
@@ -517,7 +522,7 @@ contract tradeManager is Initializable {
         IERC20(noTokenAddress).transfer(receiver,splitPositionParmas.amount);  
 
         //get wrapped erc1155 from factory ,transfer without approve
-        CTF(ctfAddress).safeTransferFrom(transferParmas.from, 
+        CTF(ctfAddress).safeTransferFrom(address(this), 
                                          transferParmas.to, 
                                          transferParmas.id, 
                                          transferParmas.value, 
@@ -561,9 +566,11 @@ contract tradeManager is Initializable {
                     Permit calldata permitparams) external 
     {
         require(ERC1155Factory == erc1155Factory,"invalid factory");
+        _checkaddress(pool,params.tokenIn,params.tokenOut,params.fee);
         _checkPool(pool);
         _traderDeposit(address(this), params.amountOut);
         //mint usdb for ctf
+
         require(params.tokenIn == usdbTokenAddress);
         IERC20(params.tokenIn).approve(SwapRouter,type(uint256).max);
         (,int24 tickBeforeSwap, , , , , ) = SwapPool(pool).slot0(); 
@@ -692,6 +699,25 @@ contract tradeManager is Initializable {
     }
     function _checkPool(address pool) internal {
         require(reportedCounts[pool] == 0, 'in settlement phase');
+    }
+    function _checkaddress(address pool,address tokenIn,address tokenOut,uint24 fee) internal view {
+        require(tokenIn == usdbTokenAddress || tokenOut == usdbTokenAddress,"one token must be usdb");
+        (address token0, address token1) = tokenIn < tokenOut ? (tokenIn, tokenOut) : (tokenOut, tokenIn);
+        require(token0 < token1);
+        pool = address(
+            uint160(
+                uint256(
+                    keccak256(
+                        abi.encodePacked(
+                            hex"ff",
+                            deployer,
+                            keccak256(abi.encode(token0, token1, fee)),
+                            POOL_INIT_CODE_HASH
+                        )
+                    )
+                )
+            )
+        );
     }
 
 
@@ -841,14 +867,17 @@ contract tradeManager is Initializable {
         usdcToken.transferFrom(msg.sender,address(this),assets);
         IERC20(usdbTokenAddress).mint(address(this), assets);   
         if(isRisk){
+            IERC20(usdbTokenAddress).approve(tBLP, assets);
             IBLPToken(tBLP).deposit(assets, receiver);
         }
         else{
+            IERC20(usdbTokenAddress).approve(sBLP, assets);
             IBLPToken(sBLP).deposit(assets, receiver);
         }
     }
     function LPWithdraw(uint256 assets, address receiver,address owner,bool isRisk) public {
         _withdrawcheck(assets);
+        require(msg.sender == owner, "not authorized to withdraw");
 
         if(isRisk){
             IBLPToken(tBLP).withdraw(assets, receiver, owner);
