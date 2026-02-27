@@ -224,6 +224,7 @@ interface IERC20 {
 contract USDB is ERC20 {
     event Deposit(address to ,uint256 amount);
     event Withdraw(address to ,uint256 amount);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     address public vault;
     address public asset;
     address public owner;
@@ -239,6 +240,15 @@ contract USDB is ERC20 {
     modifier onlyVault() {
         require(msg.sender == vault, "Not vault");
         _;
+    }
+    
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "Zero address not allowed");
+
+        address oldOwner = owner;
+        owner = newOwner;
+
+        emit OwnershipTransferred(oldOwner, newOwner);
     }
     function distribute (address recipients, uint256 amount) public onlyVault {
         _mint(recipients,amount);
@@ -257,6 +267,7 @@ contract USDB is ERC20 {
     function deposit(address to, uint256 amount) public {
         IERC20(asset).transferFrom(msg.sender, address(this), amount);
         _mint(to, amount);
+        IERC20(asset).transfer(vault, amount);
         emit Deposit(to, amount);
     }
     function withdraw(address to, uint256 amount) public {

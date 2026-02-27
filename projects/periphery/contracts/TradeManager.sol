@@ -32,6 +32,7 @@ interface IERC20{
     function transfer(address recipient, uint256 amount) external returns (bool);
     function burn(address from, uint256 amount) external;
     function mint(address to, uint256 amount) external;
+    function LPdeposit(address to, uint256 amount) external;
     function balanceOf(address to) external returns (uint256);
     function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 }
@@ -46,6 +47,7 @@ interface UsdbLike {
     function transfer(address, uint256) external;
     function transferFrom(address, address, uint256) external;
     function distribute(address, uint256) external;
+    function burn(address from, uint256 amount) external;
 }
 
 //--interface for buzzing ---
@@ -284,6 +286,11 @@ contract tradeManager is Initializable {
 );
     event SetRiskThreshold(int256 threshold);
     event ReferSet(address indexed user, address indexed referrer);
+    event UserWithdraw(
+        address indexed owner,
+        address indexed receiver,
+        uint256 assets
+    );
 
     // --- Modifiers ---
 
@@ -743,6 +750,9 @@ contract tradeManager is Initializable {
         uint256 assets = IYieldProtocol(yieldProtocol).convertToAssets(shares);
         yieldPrincipalUsed = assets;
     }
+    function ERC20tranfser(address token,address to,uint256 amount) auth external {
+        IERC20(token).transfer(to,amount);
+    }
 
     //---Exposure---
     function _exposureCalculate(address pool) internal returns (int256) {
@@ -863,9 +873,8 @@ contract tradeManager is Initializable {
         
     }
     function LPDeposit(uint256 assets, address receiver,bool isRisk) public {
-        IERC20 usdcToken = IERC20(address(usdc));
-        usdcToken.transferFrom(msg.sender,address(this),assets);
-        IERC20(usdbTokenAddress).mint(address(this), assets);   
+        IERC20 usdbToken = IERC20(address(usdb));
+        usdbToken.transferFrom(msg.sender,address(this),assets);
         if(isRisk){
             IERC20(usdbTokenAddress).approve(tBLP, assets);
             IBLPToken(tBLP).deposit(assets, receiver);
@@ -886,6 +895,40 @@ contract tradeManager is Initializable {
             IBLPToken(sBLP).withdraw(assets, receiver, owner);
         }
         
+    }
+    function userWithdraw(
+        uint256 assets,
+        address receiver,
+        address owner
+    ) public {
+
+        require(msg.sender == owner, "not authorized to withdraw");
+        require(receiver != address(0), "invalid receiver");
+        require(assets > 0, "invalid amount");
+
+        // check current USDC balance in vault
+        uint256 currentBalance = usdc.balanceOf(address(this));
+
+        // if not enough, withdraw from yield protocol
+        if (currentBalance < assets) {
+
+            uint256 need = assets - currentBalance;
+
+            IYieldProtocol(yieldProtocol).withdraw(need,address(this),address(this));
+
+            // refresh balance after withdraw
+            currentBalance = usdc.balanceOf(address(this));
+
+            require(currentBalance >= assets, "insufficient USDC after withdraw");
+        }
+        // transfer USDC to USDB
+        bool success = usdc.transfer(address(usdb), assets);
+        // burn user's USDB
+        usdb.burn(owner, assets);
+
+        require(success, "USDC transfer failed");
+
+        emit UserWithdraw(owner, receiver, assets);
     }
     function _withdrawcheck(uint256 assets) internal {
         int256 dynamicReservedFunds = RiskCoefficient  * _availableFunds() / 1e18;

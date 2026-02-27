@@ -324,7 +324,7 @@ contract PreTrading {
 
             p.yesUSDAmount = 0;
 
-        } else {
+        } else if (marketResult[conditionId] == MarketResult.NO) {
 
             require(p.noUSDAmount > 0, "No winning position");
 
