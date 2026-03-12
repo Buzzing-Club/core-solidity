@@ -200,6 +200,12 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
         uint256 supply = totalSupply();
 
         if (accPnlPerToken < 0) {
+            if (!isDeposit && shares == supply) {
+                accPnlPerToken = 0;
+                updateShareToAssetsPrice();
+                totalDeposited = totalDeposited - assets;
+                return;
+            }
             accPnlPerToken =
                 (accPnlPerToken * int256(supply)) /
                 (isDeposit ? int256(supply + shares) : int256(supply - shares));

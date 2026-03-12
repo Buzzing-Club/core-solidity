@@ -8,6 +8,7 @@ contract ContractFactory {
     address public owner;
     address public usdbAddr;
     address public usdcAddr;
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     Parameters public parameters;
     struct Parameters {
         address factoryOwner;
@@ -24,6 +25,12 @@ contract ContractFactory {
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
         _;
+    }
+
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "Zero address not allowed");
+        emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
     }
 
     function deploy(

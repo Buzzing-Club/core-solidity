@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "contracts": {
+    "buzzingSwapPoolDeployer": "0xf1753EAB181dC2eE35B05ddD922adFDC4cbD6f2D",
+    "buzzingSwapFactory": "0xe51f7e7e8c37aB4a7fB1e78da251Ca263483ce28",
+    "swapRouter": "0xa3F9215Cc6b0a7123dfDEC7d8B315a66EdF00542",
+    "positionDescriptor": "0xC92510965e9Ad8e474f2A1c599aF065656627558",
+    "nonfungiblePositionManager": "0x6A29f2b0d34fe2fC4fB28BEA570B4aF08D9D78E2",
+    "buzzingInterfaceMulticall": "0x7a9614F2188cF1704b13C5b7c2aAa5bEd19fd728",
+    "v3Migrator": "0x2FE237195eD5d8353A829C602dBCa01E1b7FFDcb",
+    "tickLens": "0x5D598466FC66E67c923A384740F9C7Bc6c974cba",
+    "quoterV2": "0x9dE195d77a9b1aEE58b690477556490F887C2459",
+    "wrapped1155Factory": "0xb4eF504c461Ec8192d9396734D4B3943CEa39790",
+    "ctf": "0x0E4f8287cBa50d58966e3A15e7F55D55C53944Df",
+    "USDC": "0xE43Ac8688D29A7212224bC2954c96c93f3b0b96E",
+    "USDB": "0x9EA1ed9264F1542a5E8DFb59881d8440E9AaAC41",
+    "tBLPProxy": "0x34B5E6370287d31475e08e9206a53904FB9C8D64",
+    "sBLPProxy": "0x84FEf7A5301017C999e9297BAE481e0063BA6771",
+    "tradeManagerProxy": "0xD66Aa271B0fb79713CAAbbb1aa84a8a4EdCF8Ad5",
+    "feeAdapterProxy": "0x7EedA56FFB02794B81c32fd721Ad93BAa4DE8F7e",
+    "dynamicFeeManager": "0x43E0958c0B72ABB8240901ACDf525cA019Eb4ee5",
+    "contractFactory": "0xd07613ca6AEa546E84E81ee400DA82B1aB53d33A",
+    "preTrading": "0x8d1Fd89E88a17CAC8370405A7eAd87ACD1Ae6B3C",
+    "sUsds": "0xfc6D0010E64f7B385ea1E6a1aA44b271db6D09b3",
+    "feeRebateDistributor": "0x4712D142F943b5eD648D9BE8a0de1e7924429e78"
+  },
+  "flags": {
+    "usdbPrefundDone": true,
+    "lpBootstrapDone": true,
+    "yieldBootstrapDone": true
+  },
+  "meta": {
+    "networkName": "basetestnet",
+    "chainId": 84532,
+    "deployer": "0xAc9B1Bb01297e90528B22E837E9FfB28E2487439",
+    "preTradingThresholdRaw": "1000000000"
+  },
+  "updatedAt": "2026-03-10T17:46:45.717Z"
+}

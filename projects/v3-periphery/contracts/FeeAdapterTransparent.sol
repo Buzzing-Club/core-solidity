@@ -40,6 +40,7 @@ contract FeeAdapterTransparent is Initializable {
 
     /// @notice Emitted when a user claims their fee
     event FeeClaimed(address indexed user, address indexed token, uint256 amount);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers(); // Avoid initializing in the context of the implementation
@@ -66,6 +67,12 @@ contract FeeAdapterTransparent is Initializable {
     function setVault(address newVault) external onlyOwner {
         require(newVault != address(0), "Invalid vault address");
         vault = newVault;
+    }
+
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "Invalid owner");
+        emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
     }
 
     function setPoolTotalFeeRatio(address pool, uint256 ratio) external onlyOwner {

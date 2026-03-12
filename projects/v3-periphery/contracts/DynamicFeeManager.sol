@@ -2,6 +2,8 @@
 pragma solidity ^0.8.20;
 
 contract DynamicFeeManager {
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
     struct PoolVolatility {
         int24 referenceTick;        // Last reference tick (ir)
         uint256 referenceVolatility; // Reference volatility (vr)
@@ -127,5 +129,12 @@ contract DynamicFeeManager {
         variableFeeControl = _variableFeeControl;
         baseFeeUnit = _baseFeeUnit;
         tradeManager = _tradeManager;
+    }
+
+    function transferOwnership(address newOwner) external {
+        require(msg.sender == owner, "Only owner");
+        require(newOwner != address(0), "Zero address");
+        emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
     }
 }

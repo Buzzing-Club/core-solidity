@@ -22,6 +22,29 @@
   - When result matches side: USDB increase equals redeemed token amount
   - When result mismatches side: USDB increase is zero
 
+- `pnl.spec.js`
+  - Build pool/liquidity and execute `buyYes -> sellYes`
+  - Recompute expected trader pnl using the same on-chain formula
+  - Verify `PnLHandled` event values and `tBLP/sBLP` pnl allocation
+  - Print `expectedHandledPnl` and `actualHandledPnl` for debugging
+
+- `blp.last-lp.divzero.spec.js`
+  - Validate `sBLP/tBLP` behavior when pnl is negative and the last LP exits
+  - Verify full exit succeeds and state resets (`shareToAssetsPrice = 1e18`, `accPnlPerToken = 0`)
+  - Verify partial exit (`leave 1 share`) does not trigger division-by-zero paths
+
+- `blp.inflation-attack.spec.js`
+  - Simulate classic ERC4626 donation/inflation attack path
+  - Verify direct token donation to `sBLP/tBLP` does not change share price
+  - Verify later depositor share minting is not diluted by donation
+
+- `wrapped1155.metadata.spec.js`
+  - Validate Wrapped1155 metadata decoding behavior for two payload styles:
+    - `raw-bytes32`
+    - `slot-encoded`
+  - Verify impact to `name/symbol/decimals`
+  - Verify permit `DOMAIN_SEPARATOR` follows actual on-chain `name()`
+
 ## Run Commands (Linux)
 
 Run one file:
@@ -30,10 +53,20 @@ Run one file:
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeyes.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeno.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/redeem.outcome.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/pnl.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.last-lp.divzero.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.inflation-attack.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/wrapped1155.metadata.spec.js --network hardhat
 ```
 
-Run all three:
+Run main trade flow + pnl:
 
 ```bash
-yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeyes.spec.js ./test/trade/tradeno.spec.js ./test/trade/redeem.outcome.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeyes.spec.js ./test/trade/tradeno.spec.js ./test/trade/redeem.outcome.spec.js ./test/trade/pnl.spec.js --network hardhat
+```
+
+Run all trade specs:
+
+```bash
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeyes.spec.js ./test/trade/tradeno.spec.js ./test/trade/redeem.outcome.spec.js ./test/trade/pnl.spec.js ./test/trade/blp.last-lp.divzero.spec.js ./test/trade/blp.inflation-attack.spec.js ./test/trade/wrapped1155.metadata.spec.js --network hardhat
 ```

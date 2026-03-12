@@ -104,6 +104,7 @@ contract PreTrading {
     uint256 oldDelay,
     uint256 newDelay
     );
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     /* ===================== STORAGE ===================== */
 
@@ -383,5 +384,11 @@ contract PreTrading {
         WITHDRAW_DELAY = _delay;
 
         emit WithdrawDelayUpdated(oldDelay, _delay);
+    }
+
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "Invalid owner");
+        emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
     }
 }

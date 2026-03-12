@@ -15,6 +15,16 @@ All commands below assume you run them from the workspace root.
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeyes.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeno.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/redeem.outcome.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/pnl.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.last-lp.divzero.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.inflation-attack.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/wrapped1155.metadata.spec.js --network hardhat
+```
+
+Run all trade specs:
+
+```bash
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeyes.spec.js ./test/trade/tradeno.spec.js ./test/trade/redeem.outcome.spec.js ./test/trade/pnl.spec.js ./test/trade/blp.last-lp.divzero.spec.js ./test/trade/blp.inflation-attack.spec.js ./test/trade/wrapped1155.metadata.spec.js --network hardhat
 ```
 
 ## Run PreTrading Tests

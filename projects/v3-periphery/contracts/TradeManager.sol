@@ -497,7 +497,7 @@ contract tradeManager is Initializable {
         );
 
         // 7. transfer NO token
-        IERC20(noToken).transfer(tokenOwnership[params.tokenId], amountOut);
+        IERC20(noToken).transfer(tokenOwnership[params.tokenId], transferAmount);
         IERC20(usdbTokenAddress).transfer(tokenOwnership[params.tokenId], usdbAmount);
         return (amount0, amount1,transferAmount);
     }
@@ -807,7 +807,7 @@ contract tradeManager is Initializable {
         require(tokenIn == usdbTokenAddress || tokenOut == usdbTokenAddress,"usdbError");
         (address token0, address token1) = tokenIn < tokenOut ? (tokenIn, tokenOut) : (tokenOut, tokenIn);
         require(token0 < token1);
-        pool = address(
+        address expectedPool = address(
             uint160(
                 uint256(
                     keccak256(
@@ -821,6 +821,7 @@ contract tradeManager is Initializable {
                 )
             )
         );
+        require(pool == expectedPool, "PM");
     }
 
 
