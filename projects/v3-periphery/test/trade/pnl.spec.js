@@ -309,4 +309,5 @@ describe("TradeManager pnl", function () {
       expect(BigInt(sReclaimEvent.args.assets.toString())).to.equal(expectedSPnl);
     }
   });
+
 });

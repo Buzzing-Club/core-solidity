@@ -105,6 +105,7 @@ contract PreTrading {
     uint256 newDelay
     );
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event OracleUpdated(address indexed previousOracle, address indexed newOracle);
 
     /* ===================== STORAGE ===================== */
 
@@ -390,5 +391,11 @@ contract PreTrading {
         require(newOwner != address(0), "Invalid owner");
         emit OwnershipTransferred(owner, newOwner);
         owner = newOwner;
+    }
+
+    function setOracle(address newOracle) external onlyOwner {
+        require(newOracle != address(0), "Invalid oracle");
+        emit OracleUpdated(oracle, newOracle);
+        oracle = newOracle;
     }
 }

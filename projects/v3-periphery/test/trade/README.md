@@ -28,6 +28,22 @@
   - Verify `PnLHandled` event values and `tBLP/sBLP` pnl allocation
   - Print `expectedHandledPnl` and `actualHandledPnl` for debugging
 
+- `distributepnl.spec.js`
+  - Build pool/liquidity and execute `buyYes -> sellYes`
+  - Verify pnl settlement sync between:
+    - `tBLP/sBLP` share price change
+    - `tBLP/sBLP` real USDB balance change (mint/burn side)
+  - Verify LP withdraw expectation under current price model:
+    - `maxWithdrawByPrice` (shares * current price)
+    - `maxWithdrawOnChain`
+    - `requestedWithdraw(5%)` and actual `withdrawReceived`
+  - Key debug logs:
+    - `userPnl`, `handledPnl`
+    - `alloc tBLP/sBLP`
+    - `tBLP/sBLP price before -> after`
+    - `tBLP/sBLP usdb before -> after`
+    - `balanceMatch`, `expectedModelMatch`, `withdrawMatch`
+
 - `blp.last-lp.divzero.spec.js`
   - Validate `sBLP/tBLP` behavior when pnl is negative and the last LP exits
   - Verify full exit succeeds and state resets (`shareToAssetsPrice = 1e18`, `accPnlPerToken = 0`)
@@ -45,6 +61,24 @@
   - Verify impact to `name/symbol/decimals`
   - Verify permit `DOMAIN_SEPARATOR` follows actual on-chain `name()`
 
+- `dynamic-fee.low-frequency.100.spec.js`
+  - Dynamic fee low-frequency simulation
+  - 100 trades, separated blocks/time (`dt > decayPeriod`), size `1000U`
+  - Persist per-trade on-chain details to `test/trade/reports/*`
+
+- `dynamic-fee.mid-frequency.100.spec.js`
+  - Dynamic fee mid-frequency simulation
+  - 100 trades, `filterPeriod < dt < decayPeriod`, size `1000U`
+  - Persist per-trade on-chain details to `test/trade/reports/*`
+
+- `dynamic-fee.high-frequency.100.spec.js`
+  - Dynamic fee high-frequency simulation
+  - 100 trades, `dt=1s` high-frequency path, size `1000U`
+  - Persist per-trade on-chain details to `test/trade/reports/*`
+
+- `dynamic-fee-results.zh-CN.md`
+  - Chinese result report for the 3 grouped 100-trade dynamic fee simulations
+
 ## Run Commands (Linux)
 
 Run one file:
@@ -54,15 +88,25 @@ yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeyes.spec
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeno.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/redeem.outcome.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/pnl.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/distributepnl.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.last-lp.divzero.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.inflation-attack.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/wrapped1155.metadata.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/dynamic-fee.low-frequency.100.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/dynamic-fee.mid-frequency.100.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/dynamic-fee.high-frequency.100.spec.js --network hardhat
 ```
 
 Run main trade flow + pnl:
 
 ```bash
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/tradeyes.spec.js ./test/trade/tradeno.spec.js ./test/trade/redeem.outcome.spec.js ./test/trade/pnl.spec.js --network hardhat
+```
+
+Run pnl + distribute settlement checks:
+
+```bash
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/pnl.spec.js ./test/trade/distributepnl.spec.js --network hardhat
 ```
 
 Run all trade specs:

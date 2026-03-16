@@ -19,6 +19,9 @@ yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/pnl.spec.js -
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.last-lp.divzero.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.inflation-attack.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/wrapped1155.metadata.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/dynamic-fee.low-frequency.100.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/dynamic-fee.mid-frequency.100.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/dynamic-fee.high-frequency.100.spec.js --network hardhat
 ```
 
 Run all trade specs:

@@ -199,6 +199,10 @@ export default {
     monad: {
       url: `https://testnet-rpc.monad.xyz/`,
       accounts : [process.env.PRIVATE_KEY]
+    },
+    base: {
+      url: `https://base-rpc.publicnode.com`,
+      accounts : [process.env.PRIVATE_KEY]
     }
 
   },
@@ -249,6 +253,7 @@ export default {
       'contracts/tBLP.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/sBLP.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/TradeManager.sol':TRADEMANAGER_COMPILER_SETTINGS,
+      'contracts/TradeManager2.sol':TRADEMANAGER_COMPILER_SETTINGS,
       'contracts/PreTrading.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/Hashes.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/MerkleProof.sol':SUSDBVAULT_COMPILER_SETTINGS,
@@ -257,7 +262,8 @@ export default {
       'contracts/FeeAdapterTransparent.sol':SUSDBVAULT_COMPILER_SETTINGS,
       'contracts/FeeRebateDistributor.sol':SUSDBVAULT_COMPILER_SETTINGS
       ,
-      'contracts/PositionExitCoordinator.sol':SUSDBVAULT_COMPILER_SETTINGS
+      'contracts/PositionExitCoordinator.sol':SUSDBVAULT_COMPILER_SETTINGS,
+      'contracts/BatchDistributor.sol':SUSDBVAULT_COMPILER_SETTINGS
     },
   },
   watcher: {

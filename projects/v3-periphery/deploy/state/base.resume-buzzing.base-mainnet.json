@@ -1,0 +1,57 @@
+﻿{
+    "version":  1,
+    "contracts":  {
+                      "buzzingSwapPoolDeployer":  "0xee1351A12A041e818295230Dfe57A7a1740cdBA7",
+                      "buzzingSwapFactory":  "0x19405b671f0e5797a8EC6AC5A2b51F15BD537032",
+                      "swapRouter":  "0x5aa838a87769feF806770298Cb6C239f14D4Dc12",
+                      "positionDescriptor":  "0x27324F11BDb3a963623D5dD9Cd3e10Aaee257dFC",
+                      "nonfungiblePositionManager":  "0x8B7a44430f558e978A7281B9754Aa65a8fa5B433",
+                      "buzzingInterfaceMulticall":  "0xc680C2be0f10d544A678b0ca5C0BE4a40d9726d4",
+                      "v3Migrator":  "0x95b4b60c22C0BBf6da046182936C2bF32cb4b208",
+                      "tickLens":  "0xcdF26192011882eF89c7a0cDF56708473F3353ec",
+                      "quoterV2":  "0x2F820B5c039FEBc6a1B06A4d3e3b7Cae42Ae7Bf9",
+                      "wrapped1155Factory":  "0x0E73A0d3613663F118608c5b7069C844e100CC1d",
+                      "ctf":  "0xe466AE30F3d7C2f5f4633031490B3749A69Ca640",
+                      "USDC":  "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                      "USDB":  "0xF3B63DD097d1787E9c0Af4b243fa157dDfd5BBfB",
+                      "tBLPProxy":  "0x377318c559f07A4D498eAe69d76BE4fA691De2Fa",
+                      "sBLPProxy":  "0xb15454aC74CEFb42d73B6A8E2D12Ca1410BBf018",
+                      "tradeManagerProxy":  "0x81831E2682aa85D76898a0B0D8Ce7f939D10EDF6",
+                      "feeAdapterProxy":  "0x122ea913388bb4bb95933e6D8788d9C9eB723E4c",
+                      "dynamicFeeManager":  "0xa7925d619218f97c8Db56fC358C04Bc976eb2bb4",
+                      "feeRebateDistributor":  "0xEb81F8bc021aF56326d5704Eb4dc1b857dEc2C00",
+                      "contractFactory":  "0xBaaCB22D53BAf6aFeDacA77692639eC5bBB0ca18",
+                      "preTrading":  "0x036Ec260669DF432C098fC2B8603854D189ec89B",
+                      "sUsds":  "0x3128a0f7f0ea68e7b7c9b00afa7e41045828e858"
+                  },
+    "flags":  {
+                  "usdbPrefundDone":  false,
+                  "lpBootstrapDone":  true,
+                  "yieldBootstrapDone":  false
+              },
+    "pending":  {
+                    "usdbPrefund":  {
+                                        "status":  "pending",
+                                        "reason":  "ENABLE_PREFUND is not 1",
+                                        "requiredUSDB":  "500000000000",
+                                        "updatedAt":  "2026-03-12T14:59:24.628Z"
+                                    },
+                    "yieldBootstrap":  {
+                                           "status":  "pending",
+                                           "reason":  "ENABLE_PREFUND is not 1",
+                                           "requiredUSDC":  "100000000000",
+                                           "note":  "tradeManager.USDCdeposit not executed",
+                                           "updatedAt":  "2026-03-12T14:59:24.628Z"
+                                       }
+                },
+    "meta":  {
+                 "networkName":  "base",
+                 "chainId":  8453,
+                 "deployer":  "0x54fa4358330136332430e779BeaAD0CbA1404eAf",
+                 "externalUSDC":  "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                 "externalSUSDC":  "0x3128a0f7f0ea68e7b7c9b00afa7e41045828e858",
+                 "preTradingThresholdRaw":  "1000000000",
+                 "enablePrefund":  false
+             },
+    "updatedAt":  "2026-03-16T14:12:59.2725584Z"
+}

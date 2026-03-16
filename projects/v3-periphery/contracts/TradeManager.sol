@@ -930,16 +930,26 @@ contract tradeManager is Initializable {
         //require(pnl != 0);
        
         if (pnl < 0){
+            uint256 tBLPAmount = uint256(-tBLPPnl);
+            uint256 sBLPAmount = uint256(-sBLPPnl);
+            // User loss / LP gain: increase vault assets to match higher share price.
+            IERC20(usdbTokenAddress).mint(tBLP, tBLPAmount);
+            IERC20(usdbTokenAddress).mint(sBLP, sBLPAmount);
             
-            IBLPToken(tBLP).distributePnl(uint256(-tBLPPnl));
+            IBLPToken(tBLP).distributePnl(tBLPAmount);
             
-            IBLPToken(sBLP).distributePnl(uint256(-sBLPPnl));
+            IBLPToken(sBLP).distributePnl(sBLPAmount);
             
         }
         else if (pnl > 0){
+            uint256 tBLPAmount = uint256(tBLPPnl);
+            uint256 sBLPAmount = uint256(sBLPPnl);
+            // User gain / LP loss: decrease vault assets to match lower share price.
+            IERC20(usdbTokenAddress).burn(tBLP, tBLPAmount);
+            IERC20(usdbTokenAddress).burn(sBLP, sBLPAmount);
             
-            IBLPToken(tBLP).reclaimPnl(uint256(tBLPPnl));
-            IBLPToken(sBLP).reclaimPnl(uint256(sBLPPnl));
+            IBLPToken(tBLP).reclaimPnl(tBLPAmount);
+            IBLPToken(sBLP).reclaimPnl(sBLPAmount);
             
         }
         totalPnl += pnl;

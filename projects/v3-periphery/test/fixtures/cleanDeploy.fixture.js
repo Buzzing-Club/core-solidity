@@ -143,7 +143,8 @@ async function deployBusinessLayer(deployer, core, periphery) {
   });
   await sBLP.deployed();
 
-  const tradeManagerFactory = await ethers.getContractFactory("tradeManager", deployer);
+  const tradeManagerContractName = process.env.TRADE_MANAGER_CONTRACT || "tradeManager";
+  const tradeManagerFactory = await ethers.getContractFactory(tradeManagerContractName, deployer);
   const tradeManager = await upgrades.deployProxy(
     tradeManagerFactory,
     [
@@ -236,4 +237,3 @@ module.exports = {
   deployCleanFixture,
   assertEqAddress,
 };
-

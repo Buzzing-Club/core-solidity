@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang='zh-CN'>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <title>r80 vs r85 ????</title>
+  <style>
+    body { font-family: Segoe UI, PingFang SC, Microsoft YaHei, sans-serif; margin: 16px; }
+    table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 10px 0 18px; }
+    th, td { border: 1px solid #ddd; padding: 7px; text-align: left; }
+    th { background: #f3f4f6; }
+    .card { border: 1px solid #eee; border-radius: 8px; padding: 8px; margin: 10px 0; }
+    .imgs { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    img { width: 100%; height: auto; border: 1px solid #f3f3f3; border-radius: 6px; }
+    @media (min-width: 960px) { .imgs { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>r80 vs r85 ?????f2-v3000-d14?</h1>
+  <p>???????????? <code>2~10s vs 10~30s</code>?</p>
+  <table>
+    <thead>
+      <tr>
+        <th>??</th><th>&gt;10%</th><th>&gt;20%</th><th>dMean(0~2 vs 2~10)</th><th>dMean(2~10 vs 10~30)</th><th>dP95(2~10 vs 10~30)</th><th>KS(2~10 vs 10~30)</th>
+      </tr>
+    </thead>
+    <tbody><tr><td><code>f2-v3000-r80-d14</code></td><td>0</td><td>0</td><td>0.1589%</td><td>0.0399%</td><td>0.0118%</td><td>0.1835</td></tr><tr><td><code>f2-v3000-r85-d14</code></td><td>1</td><td>0</td><td>0.3106%</td><td>0.0593%</td><td>0.0382%</td><td>0.1969</td></tr></tbody>
+  </table>
+  <section><h2>f2-v3000-r80-d14</h2>
+<div class='card'>
+  <h4>f2-v3000-r80-d14 | 0to2s/5to100U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-0to2s-5to100U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-0to2s-5to100U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r80-d14 | 0to2s/100to200U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-0to2s-100to200U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-0to2s-100to200U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r80-d14 | 0to2s/200to300U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-0to2s-200to300U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-0to2s-200to300U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r80-d14 | 2to10s/5to100U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-2to10s-5to100U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-2to10s-5to100U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r80-d14 | 2to10s/100to200U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-2to10s-100to200U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-2to10s-100to200U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r80-d14 | 2to10s/200to300U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-2to10s-200to300U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-2to10s-200to300U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r80-d14 | 10to30s/5to100U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-10to30s-5to100U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-10to30s-5to100U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r80-d14 | 10to30s/100to200U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-10to30s-100to200U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-10to30s-100to200U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r80-d14 | 10to30s/200to300U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-10to30s-200to300U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r80-d14-10to30s-200to300U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+</section><section><h2>f2-v3000-r85-d14</h2>
+<div class='card'>
+  <h4>f2-v3000-r85-d14 | 0to2s/5to100U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-0to2s-5to100U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-0to2s-5to100U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r85-d14 | 0to2s/100to200U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-0to2s-100to200U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-0to2s-100to200U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r85-d14 | 0to2s/200to300U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-0to2s-200to300U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-0to2s-200to300U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r85-d14 | 2to10s/5to100U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-2to10s-5to100U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-2to10s-5to100U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r85-d14 | 2to10s/100to200U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-2to10s-100to200U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-2to10s-100to200U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r85-d14 | 2to10s/200to300U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-2to10s-200to300U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-2to10s-200to300U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r85-d14 | 10to30s/5to100U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-10to30s-5to100U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-10to30s-5to100U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r85-d14 | 10to30s/100to200U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-10to30s-100to200U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-10to30s-100to200U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+
+<div class='card'>
+  <h4>f2-v3000-r85-d14 | 10to30s/200to300U</h4>
+  <div class='imgs'>
+    <figure><figcaption>?????????</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-10to30s-200to300U-dynamic-fee-bps.svg'></figure>
+    <figure><figcaption>???????????/P95?</figcaption><img src='sweep-tsfocus-f2-v3000-r85-d14-10to30s-200to300U-dynamic-fee-bps-filtered-p95.svg'></figure>
+  </div>
+</div>
+</section>
+</body>
+</html>

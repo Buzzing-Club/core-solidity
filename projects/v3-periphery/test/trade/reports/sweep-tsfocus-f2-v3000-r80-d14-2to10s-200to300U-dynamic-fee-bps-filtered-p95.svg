@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760">
+  <rect x="0" y="0" width="1400" height="760" fill="#ffffff"/>
+  <text x="700" y="36" text-anchor="middle" font-size="24" font-family="Arial">Random YES Trades (SELL only) - Dynamic Fee BPS (Filtered P95)</text>
+  <text x="700" y="62" text-anchor="middle" font-size="14" font-family="Arial">x-axis: timestamp, removed top 5% extreme bps points</text>
+
+  <line x1="90" y1="670" x2="1310" y2="670" stroke="#333" stroke-width="2"/>
+  <line x1="90" y1="90" x2="90" y2="670" stroke="#333" stroke-width="2"/>
+
+  <line x1="90" y1="525.00" x2="1310" y2="525.00" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="90" y1="380.00" x2="1310" y2="380.00" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="90" y1="235.00" x2="1310" y2="235.00" stroke="#e5e7eb" stroke-width="1"/>
+
+  <text x="76" y="675" text-anchor="end" font-size="12" font-family="Arial">0</text>
+  <text x="76" y="529.00" text-anchor="end" font-size="12" font-family="Arial">14.09</text>
+  <text x="76" y="384.00" text-anchor="end" font-size="12" font-family="Arial">28.17</text>
+  <text x="76" y="239.00" text-anchor="end" font-size="12" font-family="Arial">42.26</text>
+  <text x="76" y="94" text-anchor="end" font-size="12" font-family="Arial">56.34</text>
+
+  <text x="90" y="694" font-size="12" font-family="Arial">1773637100</text>
+  <text x="1310" y="694" text-anchor="end" font-size="12" font-family="Arial">1773638491</text>
+  <text x="700" y="742" text-anchor="middle" font-size="14" font-family="Arial">Timestamp</text>
+  <text x="24" y="70" font-size="14" font-family="Arial">Fee (bps)</text>
+
+  <path d="M 90.00 250.03 L 97.02 570.29 L 115.43 253.19 L 125.08 564.24 L 132.98 110.02 L 145.26 130.38 L 152.27 183.59 L 160.17 344.89 L 174.20 238.31 L 180.34 567.42 L 187.35 153.88 L 191.74 474.93 L 208.40 196.42 L 218.93 174.17 L 223.31 458.20 L 231.21 137.94 L 243.49 109.96 L 248.75 333.16 L 262.78 223.46 L 270.68 483.00 L 282.95 118.34 L 297.86 189.94 L 300.50 400.27 L 313.65 142.13 L 322.42 496.96 L 335.58 121.17 L 342.60 169.22 L 355.75 155.24 L 370.66 154.99 L 377.68 535.95 L 393.47 166.17 L 396.97 538.17 L 403.11 180.02 L 407.50 112.67 L 418.90 143.76 L 427.67 128.07 L 437.32 358.89 L 449.60 93.41 L 459.25 143.05 L 464.51 259.72 L 479.42 230.75 L 482.93 496.21 L 499.59 147.81 L 503.98 546.35 L 516.25 166.69 L 527.66 130.69 L 533.80 160.68 L 538.18 334.91 L 551.34 235.73 L 557.48 516.72 L 568.88 187.96 L 580.28 182.73 L 582.91 347.06 L 596.07 205.21 L 608.35 240.34 L 617.99 391.62 L 642.55 246.12 L 652.20 549.45 L 667.99 129.53 L 678.51 178.06 L 696.93 96.28 L 704.82 525.37 L 723.24 216.55 L 730.26 556.75 L 743.41 194.33 L 761.83 216.14 L 770.60 487.12 L 787.27 240.93 L 796.04 408.60 L 809.19 143.89 L 818.84 540.09 L 835.51 100.56 L 839.89 526.95 L 855.68 164.47 L 858.31 461.48 L 872.34 144.58 L 887.25 95.46 L 902.16 421.22 L 915.32 224.53 L 924.09 472.50 L 933.74 187.25 L 942.51 204.27 L 945.14 341.69 L 958.30 205.23 L 966.19 506.89 L 991.62 350.55 L 1002.15 115.10 L 1006.53 417.06 L 1014.43 178.48 L 1020.57 401.99 L 1036.36 213.16 L 1039.86 513.65 L 1057.40 212.25 L 1060.04 440.01 L 1069.68 242.14 L 1079.33 380.69 L 1090.73 219.16 L 1094.24 346.76 L 1107.40 192.03 L 1117.92 141.22 L 1123.18 359.31 L 1137.22 90.00 L 1149.50 195.65 L 1159.14 138.59 L 1168.79 284.08 L 1181.95 142.49 L 1200.37 433.54 L 1213.52 168.31 L 1220.54 473.16 L 1231.94 91.62 L 1238.08 201.52 L 1250.36 172.69 L 1257.38 403.99 L 1264.39 125.94 L 1270.53 353.53 L 1280.18 149.07 L 1284.57 325.02 L 1301.23 92.78 L 1310.00 415.02" fill="none" stroke="#2563eb" stroke-width="2"/>
+</svg>
