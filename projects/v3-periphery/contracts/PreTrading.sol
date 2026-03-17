@@ -7,10 +7,11 @@ interface IERC20 {
 }
 
 contract PreTrading {
-    IERC20 public immutable usdc;
+    IERC20 public immutable usdb;
     address public oracle;
     address public owner;
 
+    uint256 public constant MIN_BET_USDB = 3 * 1e6; // 3 USDB (USDB has 6 decimals)
     uint256 public constant WITHDRAW_FEE_BPS = 500; // 5%
     uint256 public constant PROFIT_FEE_BPS = 500; // 5%
     uint256 public constant BPS_DENOM = 10_000;
@@ -134,8 +135,8 @@ contract PreTrading {
 
     /* ===================== CONSTRUCTOR ===================== */
 
-    constructor(address _usdc, address _oracle, uint256 _threshold) {
-        usdc = IERC20(_usdc);
+    constructor(address _usdb, address _oracle, uint256 _threshold) {
+        usdb = IERC20(_usdb);
         oracle = _oracle;
         marketTransferThreshold = _threshold;
         owner = msg.sender;
@@ -147,9 +148,10 @@ contract PreTrading {
 
     function deposit(bytes32 conditionId, bool isYes, uint256 amount) external {
         require(amount > 0, "Zero amount");
+        require(amount >= MIN_BET_USDB, "Bet too small");
         require(marketStatus[conditionId] == MarketStatus.OPEN, "Market not open");
 
-        require(usdc.transferFrom(msg.sender, address(this), amount), "Transfer failed");
+        require(usdb.transferFrom(msg.sender, address(this), amount), "Transfer failed");
 
         Position storage p = positions[conditionId][msg.sender];
 
@@ -182,6 +184,8 @@ contract PreTrading {
 
         if (isYes) {
             require(p.yesUSDAmount >= amount, "Insufficient YES");
+            uint256 remaining = p.yesUSDAmount - amount;
+            require(remaining == 0 || remaining >= MIN_BET_USDB, "Remain too small");
 
             p.yesUSDAmount -= amount;
             totalYesUSD[conditionId] -= amount;
@@ -196,6 +200,8 @@ contract PreTrading {
 
         } else {
             require(p.noUSDAmount >= amount, "Insufficient NO");
+            uint256 remaining = p.noUSDAmount - amount;
+            require(remaining == 0 || remaining >= MIN_BET_USDB, "Remain too small");
 
             p.noUSDAmount -= amount;
             totalNoUSD[conditionId] -= amount;
@@ -280,7 +286,7 @@ contract PreTrading {
 
         marketFeeUSD += fee;
 
-        require(usdc.transfer(msg.sender, receiveAmount), "Transfer failed");
+        require(usdb.transfer(msg.sender, receiveAmount), "Transfer failed");
 
         emit WithdrawClaimed(conditionId, msg.sender, isYes, receiveAmount, fee);
     }
@@ -356,7 +362,7 @@ contract PreTrading {
 
         p.claimed = true;
 
-        require(usdc.transfer(msg.sender, netPayout), "Transfer failed");
+        require(usdb.transfer(msg.sender, netPayout), "Transfer failed");
 
         emit Claimed(conditionId, msg.sender, netPayout);
     }
@@ -374,7 +380,7 @@ contract PreTrading {
 
         marketFeeUSD = 0;
 
-        require(usdc.transfer(to, amount), "Transfer failed");
+        require(usdb.transfer(to, amount), "Transfer failed");
 
         emit FeeWithdrawn(to, amount);
     }

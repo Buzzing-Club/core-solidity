@@ -28,7 +28,7 @@ const INIT_DEFAULTS = {
   usdcDepositIntoYield: "100000", // 100,000 USDC
 };
 const PRETRADING_DEFAULTS = {
-  thresholdRaw: "1000000000", // 1000 USDC with 6 decimals
+  thresholdRaw: "1000000000", // 1000 USDB with 6 decimals
 };
 
 function lower(addr) {

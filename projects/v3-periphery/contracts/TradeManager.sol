@@ -569,11 +569,6 @@ contract tradeManager is Initializable {
         sellYesUSD[pool] = sellYesUSD[pool] +  amountOut ;
         require(amountOut >= minAmount,"une");
        
-        //LPfee
-        uint256 LPfee = (totalFeeAmount + dynamicfee) * IFeeAdapter(feeAdapter).poolRoleShares(pool,'LP') / IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
-        //buffer
-        uint256 bufferfee = (totalFeeAmount + dynamicfee) * IFeeAdapter(feeAdapter).poolRoleShares(pool,'Buffer') / IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
-        bufferFunds += bufferfee;
         //exposure check
         _updateExposure(pool);
         _exposureCheck();
@@ -584,7 +579,7 @@ contract tradeManager is Initializable {
         
         int256 pnl = ((int256(sellPrice) - int256(avgPrice))  * int256(params.amountIn) / int256(PRECISION));
         
-        _handlePnl(pnl + int256(LPfee)); 
+        _handlePnl(pnl); 
         uint256 costReduced = pos.usdSpent * params.amountIn / pos.yesTokenAmount;
         pos.yesTokenAmount -= params.amountIn;
         pos.usdSpent -= costReduced;
@@ -614,22 +609,22 @@ contract tradeManager is Initializable {
                                       splitPositionParmas.parentCollectionId, 
                                       splitPositionParmas.conditionId, 
                                       splitPositionParmas.partition, 
-                                      splitPositionParmas.amount); 
+                                      params.amountIn); 
         //transfer no to factory to get erc20
         CTF(ctfAddress).safeTransferFrom(address(this), 
                                          transferParmas.to, 
                                          noPositionId, 
-                                         splitPositionParmas.amount, 
+                                         params.amountIn, 
                                          transferParmas.data); 
         address noTokenAddress = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,noPositionId, transferParmas.data);  
         //transfer erc20 notoken to user
-        IERC20(noTokenAddress).transfer(receiver,splitPositionParmas.amount);  
+        IERC20(noTokenAddress).transfer(receiver,params.amountIn);  
 
         //get wrapped erc1155 from factory ,transfer without approve
         CTF(ctfAddress).safeTransferFrom(address(this), 
                                          transferParmas.to, 
                                          transferParmas.id, 
-                                         transferParmas.value, 
+                                         params.amountIn, 
                                          transferParmas.data);
 
         address wrappedERC1155Address = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,transferParmas.id, transferParmas.data);
@@ -737,11 +732,6 @@ contract tradeManager is Initializable {
         _updateExposure(pool);
         _exposureCheck();
         require(params.amountOut - amountIn >= minAmount,"une");
-        //LP fee
-        uint256 LPfee = (totalFeeAmount + dynamicfee) * IFeeAdapter(feeAdapter).poolRoleShares(pool,'LP') / IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
-        //buffer
-        uint256 bufferfee = (totalFeeAmount + dynamicfee) * IFeeAdapter(feeAdapter).poolRoleShares(pool,'Buffer') / IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
-        bufferFunds += bufferfee;
         //pnl calculation
         UserNoPosition storage pos = userNoPositions[permitparams.owner][pool];
         
@@ -750,7 +740,7 @@ contract tradeManager is Initializable {
         uint256 sellPrice = (params.amountOut - amountIn) * PRECISION / amountIn;
         
         int256 pnl = ((int256(sellPrice) - int256(avgPrice)) * int256(amountIn)  / int256(PRECISION));
-        _handlePnl(pnl + int256(LPfee));
+        _handlePnl(pnl);
         uint256 costReduced = pos.usdSpent * params.amountOut / pos.noTokenAmount;
         pos.noTokenAmount -= params.amountOut;
         pos.usdSpent -= costReduced;
@@ -917,7 +907,7 @@ contract tradeManager is Initializable {
         //uint256 shares = IYieldProtocol(yieldProtocol).balanceOf(address(this)); 
 
         _handleInterest();
-        int256 availableFunds = int256(IBLPToken(tBLP).marketCap()) + int256(IBLPToken(sBLP).marketCap()) + int256(bufferFunds) - int256(IBLPToken(sBLP).totalDeposited());
+        int256 availableFunds = int256(IBLPToken(tBLP).marketCap()) + int256(IBLPToken(sBLP).marketCap()) - int256(IBLPToken(sBLP).totalDeposited());
 
         return availableFunds;
     }
@@ -967,7 +957,7 @@ contract tradeManager is Initializable {
         uint256 assets = IYieldProtocol(yieldProtocol).convertToAssets(shares);
         int256 interest = int256(assets) - int256(yieldPrincipalUsed);
         yieldPrincipalUsed = assets;
-        yieldInterest += uint256(interest);
+        // Keep yieldInterest idle for now; this path can produce negative interest.
         _handlePnl(-interest);
     }
     function marketReport(address pool,bool isYes) external auth() {
@@ -1022,6 +1012,10 @@ contract tradeManager is Initializable {
             uint256 need = assets - currentBalance;
 
             IYieldProtocol(yieldProtocol).withdraw(need,address(this),address(this));
+
+            // Sync yield principal snapshot after a yield withdrawal.
+            uint256 shares = IYieldProtocol(yieldProtocol).balanceOf(address(this));
+            yieldPrincipalUsed = IYieldProtocol(yieldProtocol).convertToAssets(shares);
 
             // refresh balance after withdraw
             currentBalance = usdc.balanceOf(address(this));

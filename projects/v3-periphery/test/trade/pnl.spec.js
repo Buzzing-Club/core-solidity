@@ -10,7 +10,6 @@ const MIN_YES_PRICE_TICK = -25259; // price 0.08
 const MAX_INV_YES_PRICE_TICK = 25258; // price 12.5 = 1 / 0.08
 const SQRT_PRICE_X96_0P5 = ethers.BigNumber.from("56022770974786139918731938227");
 const SQRT_PRICE_X96_2 = ethers.BigNumber.from("112045541949572279837463876454");
-const FEE_SCALE = ethers.BigNumber.from("1000000");
 
 function createFixtureLoader() {
   let snapshotId;
@@ -204,7 +203,7 @@ describe("TradeManager pnl", function () {
   it("computes trader pnl and allocates pnl between tBLP/sBLP on sellYes", async function () {
     const env = await loadFixture(() => setupPoolAndLiquidity());
     const { ctx, trader, pool, yesTokenAddr, yesToken } = env;
-    const { tradeManager, feeAdapter, tBLP, sBLP, dynamicFeeManager } = ctx.business;
+    const { tradeManager, tBLP, sBLP, dynamicFeeManager } = ctx.business;
 
     const buyAmountIn = ethers.utils.parseUnits("10", 6);
     await (await ctx.business.usdb.connect(trader).approve(tradeManager.address, buyAmountIn)).wait();
@@ -236,8 +235,6 @@ describe("TradeManager pnl", function () {
 
     const posBefore = await tradeManager.userYesPositions(trader.address, pool);
     const totalPnlBefore = await tradeManager.totalPnl();
-    const feeRatio = await feeAdapter.poolTotalFeeRatio(pool);
-    const lpShare = await feeAdapter.poolRoleShares(pool, ethers.utils.formatBytes32String("LP"));
     const riskCoefficient = await tradeManager.RiskCoefficient();
     const precision = ethers.constants.WeiPerEther;
     const variableFeeControl = await dynamicFeeManager.variableFeeControl();
@@ -266,16 +263,13 @@ describe("TradeManager pnl", function () {
     expect(pnlEvent).to.not.equal(null);
 
     const amountOut = sellEvent.args.amountOut;
-    const totalFeeAmount = amountOut.mul(feeRatio).div(FEE_SCALE);
-    const lpFee = totalFeeAmount.mul(lpShare).div(feeRatio);
-
     const avgPrice = posBefore.usdSpent.mul(precision).div(posBefore.yesTokenAmount);
     const sellPrice = amountOut.mul(precision).div(sellAmountIn);
 
     const traderPnl =
       ((BigInt(sellPrice.toString()) - BigInt(avgPrice.toString())) * BigInt(sellAmountIn.toString())) /
       BigInt(precision.toString());
-    const expectedHandledPnl = traderPnl + BigInt(lpFee.toString());
+    const expectedHandledPnl = traderPnl;
     const expectedTPnl = (expectedHandledPnl * BigInt(riskCoefficient.toString())) / 1000000000000000000n;
     const expectedSPnl = expectedHandledPnl - expectedTPnl;
 

@@ -29,7 +29,7 @@ const PREFUND_DEFAULTS = {
 };
 
 const PRETRADING_DEFAULTS = {
-  thresholdRaw: "1000000000", // 1000 USDC with 6 decimals
+  thresholdRaw: "1000000000", // 1000 USDB with 6 decimals
 };
 
 function lower(addr) {
@@ -369,7 +369,7 @@ async function main() {
   );
   await getOrDeployContract(state, statePath, "preTrading", ethers.provider, async () => {
     const c = await (await ethers.getContractFactory("PreTrading", signer)).deploy(
-      EXTERNAL_USDC,
+      usdbAddress,
       signer.address,
       preTradingThresholdRaw
     );

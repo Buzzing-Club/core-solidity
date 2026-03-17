@@ -10,7 +10,6 @@ const MIN_YES_PRICE_TICK = -25259; // price 0.08
 const MAX_INV_YES_PRICE_TICK = 25258; // price 12.5 = 1 / 0.08
 const SQRT_PRICE_X96_0P5 = ethers.BigNumber.from("56022770974786139918731938227");
 const SQRT_PRICE_X96_2 = ethers.BigNumber.from("112045541949572279837463876454");
-const FEE_SCALE = ethers.BigNumber.from("1000000");
 
 function createFixtureLoader() {
   let snapshotId;
@@ -177,7 +176,7 @@ describe("TradeManager distribute/reclaim pnl settlement", function () {
   it("prints key pnl allocation, price moves and withdraw expectations", async function () {
     const env = await loadFixture(() => setupPoolAndLiquidity());
     const { ctx, trader, pool, yesTokenAddr, yesToken } = env;
-    const { tradeManager, feeAdapter, tBLP, sBLP, usdb, dynamicFeeManager } = ctx.business;
+    const { tradeManager, tBLP, sBLP, usdb, dynamicFeeManager } = ctx.business;
     const deployer = ctx.deployer;
 
     const buyAmountIn = ethers.utils.parseUnits("10", 6);
@@ -209,8 +208,6 @@ describe("TradeManager distribute/reclaim pnl settlement", function () {
     await (await yesToken.connect(trader).approve(tradeManager.address, yesBal)).wait();
 
     const posBefore = await tradeManager.userYesPositions(trader.address, pool);
-    const feeRatio = await feeAdapter.poolTotalFeeRatio(pool);
-    const lpShare = await feeAdapter.poolRoleShares(pool, ethers.utils.formatBytes32String("LP"));
     const riskCoefficient = await tradeManager.RiskCoefficient();
     const precision = ethers.constants.WeiPerEther;
     expect(await dynamicFeeManager.variableFeeControl()).to.equal(0);
@@ -240,14 +237,12 @@ describe("TradeManager distribute/reclaim pnl settlement", function () {
     expect(pnlEvent).to.not.equal(null);
 
     const amountOut = sellEvent.args.amountOut;
-    const totalFeeAmount = amountOut.mul(feeRatio).div(FEE_SCALE);
-    const lpFee = totalFeeAmount.mul(lpShare).div(feeRatio);
     const avgPrice = posBefore.usdSpent.mul(precision).div(posBefore.yesTokenAmount);
     const sellPrice = amountOut.mul(precision).div(sellAmountIn);
     const traderPnl =
       ((BigInt(sellPrice.toString()) - BigInt(avgPrice.toString())) * BigInt(sellAmountIn.toString())) /
       BigInt(precision.toString());
-    const handledPnl = traderPnl + BigInt(lpFee.toString());
+    const handledPnl = traderPnl;
     const tPnl = (handledPnl * BigInt(riskCoefficient.toString())) / 1000000000000000000n;
     const sPnl = handledPnl - tPnl;
 
@@ -306,5 +301,42 @@ describe("TradeManager distribute/reclaim pnl settlement", function () {
     console.log("[distributePnl-check] withdrawReceived=", deployerUsdbAfter.sub(deployerUsdbBefore).toString());
     console.log("[distributePnl-check] balanceMatch=", balanceMatch, "expectedModelMatch=", expectedModelMatch, "withdrawMatch=", withdrawMatch);
     console.log("[distributePnl-check] withdraw is as expected under current price model =", expectedModelMatch && withdrawMatch);
+  });
+
+  it("distributePnl increases totalDeposited and full withdraw does not underflow", async function () {
+    const env = await loadFixture(() => setupPoolAndLiquidity());
+    const { ctx } = env;
+    const { tradeManager, tBLP, usdb } = ctx.business;
+    const deployer = ctx.deployer;
+
+    const pnlGainAssets = ethers.utils.parseUnits("10", 6);
+    const totalDepositedBefore = await tBLP.totalDeposited();
+    const sharesBefore = await tBLP.balanceOf(deployer.address);
+    const originalVault = await usdb.vault();
+
+    await (await tBLP.connect(deployer).setPnlhandler(deployer.address)).wait();
+    await (await usdb.connect(deployer).setVault(deployer.address)).wait();
+    await (await usdb.connect(deployer).mint(tBLP.address, pnlGainAssets)).wait();
+    await (await usdb.connect(deployer).setVault(originalVault)).wait();
+    await (await tBLP.connect(deployer).distributePnl(pnlGainAssets)).wait();
+
+    const totalDepositedAfterDistribute = await tBLP.totalDeposited();
+    expect(totalDepositedAfterDistribute).to.equal(totalDepositedBefore.add(pnlGainAssets));
+
+    const maxWithdrawAfterDistribute = await tBLP.maxWithdraw(deployer.address);
+    const expectedByPrice = sharesBefore.mul(await tBLP.shareToAssetsPrice()).div(ethers.constants.WeiPerEther);
+    expect(maxWithdrawAfterDistribute).to.equal(expectedByPrice);
+    expect(maxWithdrawAfterDistribute).to.be.gt(totalDepositedBefore);
+
+    await (
+      await tBLP
+        .connect(deployer)
+        .withdraw(maxWithdrawAfterDistribute, deployer.address, deployer.address)
+    ).wait();
+    await (await tBLP.connect(deployer).setPnlhandler(tradeManager.address)).wait();
+
+    const totalDepositedAfterWithdraw = await tBLP.totalDeposited();
+    expect(totalDepositedAfterWithdraw).to.equal(0);
+    expect(await tBLP.balanceOf(deployer.address)).to.equal(0);
   });
 });

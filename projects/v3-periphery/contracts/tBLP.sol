@@ -217,6 +217,8 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
     function distributePnl(uint256 assets) external {
         address sender = _msgSender();
         if (sender != pnlHandler) revert OnlyTradingPnlHandler();
+        require(totalSupply() > 0, "NO_SUPPLY");
+        totalDeposited += assets;
         accPnlPerToken += int256((assets * PRECISION_18) / totalSupply());
         updateShareToAssetsPrice();
 
@@ -225,6 +227,9 @@ contract tBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
     function reclaimPnl(uint256 assets) external  {
         address sender = _msgSender();
         if (sender != pnlHandler) revert OnlyTradingPnlHandler();
+        require(totalSupply() > 0, "NO_SUPPLY");
+        require(totalDeposited >= assets, "INSUFFICIENT_TOTAL_DEPOSITED");
+        totalDeposited -= assets;
 
         int256 accPnlDelta = int256((assets * PRECISION_18) / totalSupply());
         accPnlPerToken -= accPnlDelta;

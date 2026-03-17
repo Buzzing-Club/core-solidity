@@ -21,7 +21,7 @@
                       "dynamicFeeManager":  "0xa7925d619218f97c8Db56fC358C04Bc976eb2bb4",
                       "feeRebateDistributor":  "0xEb81F8bc021aF56326d5704Eb4dc1b857dEc2C00",
                       "contractFactory":  "0xBaaCB22D53BAf6aFeDacA77692639eC5bBB0ca18",
-                      "preTrading":  "0x036Ec260669DF432C098fC2B8603854D189ec89B",
+                      "preTrading":  "0x849Dfcd894c8da34ae0F78EA894cD6D14804517d",
                       "sUsds":  "0x3128a0f7f0ea68e7b7c9b00afa7e41045828e858"
                   },
     "flags":  {
@@ -53,5 +53,5 @@
                  "preTradingThresholdRaw":  "1000000000",
                  "enablePrefund":  false
              },
-    "updatedAt":  "2026-03-16T14:12:59.2725584Z"
+    "updatedAt":  "2026-03-17T02:59:43.3205101Z"
 }

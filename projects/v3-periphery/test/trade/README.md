@@ -61,22 +61,22 @@
   - Verify impact to `name/symbol/decimals`
   - Verify permit `DOMAIN_SEPARATOR` follows actual on-chain `name()`
 
-- `dynamic-fee.low-frequency.100.spec.js`
+- `test/dynamicfee/dynamic-fee.low-frequency.100.spec.js`
   - Dynamic fee low-frequency simulation
   - 100 trades, separated blocks/time (`dt > decayPeriod`), size `1000U`
-  - Persist per-trade on-chain details to `test/trade/reports/*`
+  - Persist per-trade on-chain details to `test/dynamicfee/reports/*`
 
-- `dynamic-fee.mid-frequency.100.spec.js`
+- `test/dynamicfee/dynamic-fee.mid-frequency.100.spec.js`
   - Dynamic fee mid-frequency simulation
   - 100 trades, `filterPeriod < dt < decayPeriod`, size `1000U`
-  - Persist per-trade on-chain details to `test/trade/reports/*`
+  - Persist per-trade on-chain details to `test/dynamicfee/reports/*`
 
-- `dynamic-fee.high-frequency.100.spec.js`
+- `test/dynamicfee/dynamic-fee.high-frequency.100.spec.js`
   - Dynamic fee high-frequency simulation
   - 100 trades, `dt=1s` high-frequency path, size `1000U`
-  - Persist per-trade on-chain details to `test/trade/reports/*`
+  - Persist per-trade on-chain details to `test/dynamicfee/reports/*`
 
-- `dynamic-fee-results.zh-CN.md`
+- `test/dynamicfee/dynamic-fee-results.zh-CN.md`
   - Chinese result report for the 3 grouped 100-trade dynamic fee simulations
 
 ## Run Commands (Linux)
@@ -92,9 +92,9 @@ yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/distributepnl
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.last-lp.divzero.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/blp.inflation-attack.spec.js --network hardhat
 yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/wrapped1155.metadata.spec.js --network hardhat
-yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/dynamic-fee.low-frequency.100.spec.js --network hardhat
-yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/dynamic-fee.mid-frequency.100.spec.js --network hardhat
-yarn workspace @pancakeswap/v3-periphery hardhat test ./test/trade/dynamic-fee.high-frequency.100.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/dynamicfee/dynamic-fee.low-frequency.100.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/dynamicfee/dynamic-fee.mid-frequency.100.spec.js --network hardhat
+yarn workspace @pancakeswap/v3-periphery hardhat test ./test/dynamicfee/dynamic-fee.high-frequency.100.spec.js --network hardhat
 ```
 
 Run main trade flow + pnl:
