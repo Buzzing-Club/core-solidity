@@ -572,9 +572,20 @@ contract tradeManager2 is Initializable {
         _pullTokenWithOptionalPermit(usdbTokenAddress, params.amountIn, permitparams);
         // require(params.tokenIn == usdbTokenAddress);
 
+        IFeeAdapter feeAdpt = IFeeAdapter(feeAdapter);
+        uint256 feeRatio = feeAdpt.poolTotalFeeRatio(pool);
+        uint256 totalFeeAmount = params.amountIn * feeRatio / FEE_SCALE;
+        uint256 amountInAfterFee = params.amountIn - totalFeeAmount;
+
+        ExactInputSingleParams memory swapParams = params;
+        swapParams.amountIn = amountInAfterFee;
         IERC20(params.tokenIn).approve(SwapRouter,type(uint256).max);   
 
-        uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
+        uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(swapParams);
+        if (totalFeeAmount > 0) {
+            IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount);
+            feeAdpt.recordFee(pool, refers[permitparams.owner], usdbTokenAddress, totalFeeAmount);
+        }
         _tickcheck(pool);
         //user position update
         UserYesPosition storage pos = userYesPositions[permitparams.owner][pool];
@@ -667,19 +678,28 @@ contract tradeManager2 is Initializable {
         // max approve for swap yes to usd
         IERC20(wrappedERC1155Address).approve(SwapRouter,type(uint256).max);
 
+        IFeeAdapter feeAdpt = IFeeAdapter(feeAdapter);
+        uint256 feeRatio = feeAdpt.poolTotalFeeRatio(pool);
+        uint256 totalFeeAmount = params.amountIn * feeRatio / FEE_SCALE;
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
+        uint256 userCost = params.amountIn - amountOut;
+        uint256 totalUserDebit = userCost + totalFeeAmount;
         //pull usdb from user
-        _pullTokenWithOptionalPermit(usdbTokenAddress, params.amountIn - amountOut, permitparams);
+        _pullTokenWithOptionalPermit(usdbTokenAddress, totalUserDebit, permitparams);
         IERC20(usdbTokenAddress).burn(address(this),params.amountIn);
+        if (totalFeeAmount > 0) {
+            IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount);
+            feeAdpt.recordFee(pool, refers[permitparams.owner], usdbTokenAddress, totalFeeAmount);
+        }
 
         UserNoPosition storage pos = userNoPositions[permitparams.owner][pool];
         pos.noTokenAmount += params.amountIn;
         
-        pos.usdSpent += params.amountIn - amountOut;
+        pos.usdSpent += totalUserDebit;
         
         buyNoAmount[pool] = buyNoAmount[pool] +  params.amountIn;
-        buyNoUSD[pool] = buyNoUSD[pool] +  params.amountIn - amountOut;
-        require(params.amountIn - amountOut < maxAmount,"tmu");
+        buyNoUSD[pool] = buyNoUSD[pool] +  totalUserDebit;
+        require(totalUserDebit < maxAmount,"tmu");
         _postTradeExposureChecks(pool);
 
         emit BuyNo(params.amountIn, amountOut, pool , permitparams.owner);
