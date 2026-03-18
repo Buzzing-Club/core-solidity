@@ -642,10 +642,10 @@ contract tradeManager is Initializable {
         // max approve for swap yes to usd
         IERC20(wrappedERC1155Address).approve(SwapRouter,type(uint256).max);
 
-        uint256 feeRatio = IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
-        uint256 totalFeeAmount = params.amountIn * feeRatio / FEE_SCALE;
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
         uint256 userCost = params.amountIn - amountOut;
+        uint256 feeRatio = IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
+        uint256 totalFeeAmount = userCost * feeRatio / FEE_SCALE;
         uint256 totalUserDebit = userCost + totalFeeAmount;
         //pull usdb from user
         if(permitparams.owner != msg.sender){

@@ -679,10 +679,10 @@ contract tradeManager2 is Initializable {
         IERC20(wrappedERC1155Address).approve(SwapRouter,type(uint256).max);
 
         IFeeAdapter feeAdpt = IFeeAdapter(feeAdapter);
-        uint256 feeRatio = feeAdpt.poolTotalFeeRatio(pool);
-        uint256 totalFeeAmount = params.amountIn * feeRatio / FEE_SCALE;
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
         uint256 userCost = params.amountIn - amountOut;
+        uint256 feeRatio = feeAdpt.poolTotalFeeRatio(pool);
+        uint256 totalFeeAmount = userCost * feeRatio / FEE_SCALE;
         uint256 totalUserDebit = userCost + totalFeeAmount;
         //pull usdb from user
         _pullTokenWithOptionalPermit(usdbTokenAddress, totalUserDebit, permitparams);
