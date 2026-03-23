@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-pragma solidity >=0.8.0;
+pragma solidity 0.8.20;
 
 import "./openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 import "./openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/contracts/utils/math/MathUpgradeable.sol";
@@ -387,7 +387,11 @@ contract tradeManager is Initializable {
                           SplitPositionParams calldata splitPositionParmas,
                           ERC1155TransferParams calldata transferParmas,
                           address ERC1155Factory,
-                          address poolAddress)
+                          address poolAddress,
+                          bool isYes,
+                          uint256 initialTokenAmount,
+                          uint256 initialUsdCost,
+                          uint256 usdbForLiquidity)
         external
         checkDeadline(mintParams.deadline)
         auth
@@ -400,7 +404,7 @@ contract tradeManager is Initializable {
     {
         require(ERC1155Factory == erc1155Factory,"IF");
         _exposureCheck();
-        IERC20(usdbTokenAddress).mint(address(this), splitPositionParmas.amount);   
+        IERC20(usdbTokenAddress).mint(address(this), splitPositionParmas.amount + usdbForLiquidity);   
         IERC20(splitPositionParmas.collateralToken).approve(ctfAddress, type(uint256).max);
         
         
@@ -427,6 +431,17 @@ contract tradeManager is Initializable {
         
         (tokenId, liquidity,amount0, amount1) = INonfungiblePositionManager(NonfungiblePositionManager).mint(mintParams); 
         tokenOwnership[tokenId] = mintParams.recipient;
+        if (wards[mintParams.recipient] != 1) {
+            if (isYes) {
+                UserYesPosition storage yesPos = userYesPositions[mintParams.recipient][poolAddress];
+                yesPos.yesTokenAmount += initialTokenAmount;
+                yesPos.usdSpent += initialUsdCost;
+            } else {
+                UserNoPosition storage noPos = userNoPositions[mintParams.recipient][poolAddress];
+                noPos.noTokenAmount += initialTokenAmount;
+                noPos.usdSpent += initialUsdCost;
+            }
+        }
         emit IncreaseLiquidity(tokenId, liquidity, amount0, amount1);
         
     }
@@ -502,30 +517,74 @@ contract tradeManager is Initializable {
         return (amount0, amount1,transferAmount);
     }
 
+    function _pullTokenWithOptionalPermit(
+        address token,
+        uint256 amount,
+        Permit calldata permitparams
+    ) internal {
+        if (permitparams.owner != msg.sender) {
+            require(wards[msg.sender] == 1);
+            IERC20(token).permit(
+                permitparams.owner,
+                permitparams.spender,
+                permitparams.value,
+                permitparams.deadline,
+                permitparams.v,
+                permitparams.r,
+                permitparams.s
+            );
+        }
+        IERC20(token).transferFrom(permitparams.owner, address(this), amount);
+    }
+
+    function _absTickDelta(int24 tickBeforeSwap, int24 tickAfterSwap) internal pure returns (uint256) {
+        return tickBeforeSwap > tickAfterSwap
+            ? uint256(int256(tickBeforeSwap) - int256(tickAfterSwap))
+            : uint256(int256(tickAfterSwap) - int256(tickBeforeSwap));
+    }
+
+    function _settlePoolFees(
+        address pool,
+        address owner,
+        uint256 grossPayout,
+        uint256 feeBaseAmount,
+        uint256 feeInputAmount,
+        int24 tickAfterSwap,
+        uint256 ticksCrossed
+    ) internal {
+        IFeeManager feeMgr = IFeeManager(feeManager);
+        feeMgr.updateVolatility(pool, tickAfterSwap, ticksCrossed);
+        uint256 dynamicfee = feeMgr.computeFee(pool, ticksCrossed, feeInputAmount);
+
+        IFeeAdapter feeAdpt = IFeeAdapter(feeAdapter);
+        uint256 feeRatio = feeAdpt.poolTotalFeeRatio(pool);
+        uint256 totalFeeAmount = feeBaseAmount * feeRatio / FEE_SCALE;
+        uint256 totalCharged = totalFeeAmount + dynamicfee;
+
+        IERC20(usdbTokenAddress).transfer(owner, grossPayout - totalCharged);
+        IERC20(usdbTokenAddress).transfer(feeAdapter, totalCharged);
+        feeAdpt.recordFee(pool, refers[owner], usdbTokenAddress, totalCharged);
+    }
+
     function buyYes(ExactInputSingleParams calldata params, address pool, uint256 minAmount,address receiver,Permit calldata permitparams) external {
         _checkaddress(pool,params.tokenIn,params.tokenOut,params.fee);
         _checkPool(pool);
-        if(permitparams.owner != msg.sender){
-            //permit for usdb transferFrom
-            require(wards[msg.sender] == 1);
-            IERC20(usdbTokenAddress).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
-        }
-        IERC20(usdbTokenAddress).transferFrom(permitparams.owner,address(this), params.amountIn);
+        _pullTokenWithOptionalPermit(usdbTokenAddress, params.amountIn, permitparams);
         // require(params.tokenIn == usdbTokenAddress);
 
-        uint256 feeRatio = IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
+        IFeeAdapter feeAdpt = IFeeAdapter(feeAdapter);
+        uint256 feeRatio = feeAdpt.poolTotalFeeRatio(pool);
         uint256 totalFeeAmount = params.amountIn * feeRatio / FEE_SCALE;
         uint256 amountInAfterFee = params.amountIn - totalFeeAmount;
 
         ExactInputSingleParams memory swapParams = params;
         swapParams.amountIn = amountInAfterFee;
         IERC20(params.tokenIn).approve(SwapRouter,type(uint256).max);   
-        
+
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(swapParams);
         if (totalFeeAmount > 0) {
-            address referrer = refers[permitparams.owner];
             IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount);
-            IFeeAdapter(feeAdapter).recordFee(pool, referrer, usdbTokenAddress, totalFeeAmount);
+            feeAdpt.recordFee(pool, refers[permitparams.owner], usdbTokenAddress, totalFeeAmount);
         }
         _tickcheck(pool);
         //user position update
@@ -535,8 +594,7 @@ contract tradeManager is Initializable {
         buyYesAmount[pool] = buyYesAmount[pool] +  amountOut;
         buyYesUSD[pool] = buyYesUSD[pool] +  params.amountIn;
         require(amountOut >= minAmount,"yne");
-        _updateExposure(pool);
-        _exposureCheck();
+        _postTradeExposureChecks(pool);
         emit BuyYes(params.amountIn, amountOut, pool, permitparams.owner);
     }
 
@@ -544,12 +602,7 @@ contract tradeManager is Initializable {
         //tokenIn always wrapped1155
         _checkaddress(pool,params.tokenIn,params.tokenOut,params.fee);
         _checkPool(pool);
-        if(permitparams.owner != msg.sender){
-            //permit for yestoken transferFrom
-            require(wards[msg.sender] == 1);
-            IERC20(params.tokenIn).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
-        }
-        IERC20(params.tokenIn).transferFrom(permitparams.owner,address(this),params.amountIn);
+        _pullTokenWithOptionalPermit(params.tokenIn, params.amountIn, permitparams);
         //require(params.tokenIn != usdbTokenAddress);
         IERC20(params.tokenIn).approve(SwapRouter,type(uint256).max); 
         
@@ -558,31 +611,14 @@ contract tradeManager is Initializable {
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
         
         (,int24 tickAfterSwap, , , , , ) = SwapPool(pool).slot0();  
-        uint256 ticksCrossed = tickBeforeSwap > tickAfterSwap
-            ? uint256(int256(tickBeforeSwap) - int256(tickAfterSwap))
-            : uint256(int256(tickAfterSwap) - int256(tickBeforeSwap));
-
-        uint256 feeRatio = IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
-       
-        uint256 totalFeeAmount = amountOut * feeRatio / FEE_SCALE ;
-      
-        //dynamic fee
-        // 1. Update pool volatility before trade
-        IFeeManager(feeManager).updateVolatility(pool, tickAfterSwap, ticksCrossed);
-        // 2. Compute fee based on volatility and ticks crossed
-        uint256 dynamicfee = IFeeManager(feeManager).computeFee(pool, ticksCrossed, amountOut);
-        //base fee for roles
-        IERC20(usdbTokenAddress).transfer(permitparams.owner, amountOut - totalFeeAmount - dynamicfee);
-        IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount + dynamicfee);
-        referrer = refers[permitparams.owner];
-        IFeeAdapter(feeAdapter).recordFee(pool, referrer, usdbTokenAddress, totalFeeAmount + dynamicfee);
+        uint256 ticksCrossed = _absTickDelta(tickBeforeSwap, tickAfterSwap);
+        _settlePoolFees(pool, permitparams.owner, amountOut, amountOut, amountOut, tickAfterSwap, ticksCrossed);
         sellYesAmount[pool] = sellYesAmount[pool] +  params.amountIn;
         sellYesUSD[pool] = sellYesUSD[pool] +  amountOut ;
         require(amountOut >= minAmount,"une");
-       
+
         //exposure check
-        _updateExposure(pool);
-        _exposureCheck();
+        _postTradeExposureChecks(pool);
         UserYesPosition storage pos = userYesPositions[permitparams.owner][pool];
         uint256 avgPrice = pos.usdSpent * PRECISION / pos.yesTokenAmount;
        
@@ -642,23 +678,18 @@ contract tradeManager is Initializable {
         // max approve for swap yes to usd
         IERC20(wrappedERC1155Address).approve(SwapRouter,type(uint256).max);
 
+        IFeeAdapter feeAdpt = IFeeAdapter(feeAdapter);
         uint256 amountOut = ISwapRouter(SwapRouter).exactInputSingle(params);
         uint256 userCost = params.amountIn - amountOut;
-        uint256 feeRatio = IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
+        uint256 feeRatio = feeAdpt.poolTotalFeeRatio(pool);
         uint256 totalFeeAmount = userCost * feeRatio / FEE_SCALE;
         uint256 totalUserDebit = userCost + totalFeeAmount;
         //pull usdb from user
-        if(permitparams.owner != msg.sender){
-            //permit for yestoken transferFrom
-            require(wards[msg.sender] == 1);
-            IERC20(usdbTokenAddress).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
-        }
-        IERC20(usdbTokenAddress).transferFrom(permitparams.owner,address(this), totalUserDebit);
+        _pullTokenWithOptionalPermit(usdbTokenAddress, totalUserDebit, permitparams);
         IERC20(usdbTokenAddress).burn(address(this),params.amountIn);
         if (totalFeeAmount > 0) {
-            address referrer = refers[permitparams.owner];
             IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount);
-            IFeeAdapter(feeAdapter).recordFee(pool, referrer, usdbTokenAddress, totalFeeAmount);
+            feeAdpt.recordFee(pool, refers[permitparams.owner], usdbTokenAddress, totalFeeAmount);
         }
 
         UserNoPosition storage pos = userNoPositions[permitparams.owner][pool];
@@ -669,8 +700,7 @@ contract tradeManager is Initializable {
         buyNoAmount[pool] = buyNoAmount[pool] +  params.amountIn;
         buyNoUSD[pool] = buyNoUSD[pool] +  totalUserDebit;
         require(totalUserDebit < maxAmount,"tmu");
-        _updateExposure(pool);
-        _exposureCheck();
+        _postTradeExposureChecks(pool);
 
         emit BuyNo(params.amountIn, amountOut, pool , permitparams.owner);
     }
@@ -705,12 +735,7 @@ contract tradeManager is Initializable {
         //CTF(ctfAddress).safeTransferFrom(msg.sender, address(this), noPositionId, params.amountOut, "");
         address noTokenAddress = Wrapped1155Factory(ERC1155Factory).getWrapped1155(ctfAddress,noPositionId, unwrappedParams.data);  
         //transfer erc20 notoken to contract
-        if(permitparams.owner != msg.sender){
-            //permit for notoken transferFrom
-            require(wards[msg.sender] == 1);
-            IERC20(noTokenAddress).permit(permitparams.owner, permitparams.spender, permitparams.value, permitparams.deadline, permitparams.v, permitparams.r, permitparams.s);
-        }
-        IERC20(noTokenAddress).transferFrom(permitparams.owner,address(this),params.amountOut);
+        _pullTokenWithOptionalPermit(noTokenAddress, params.amountOut, permitparams);
 
         Wrapped1155Factory(ERC1155Factory).unwrap(unwrappedParams.multiToken, 
                                                   noPositionId, 
@@ -728,29 +753,15 @@ contract tradeManager is Initializable {
         //transfer usdc to user
         
         IERC20(usdbTokenAddress).burn(address(this),amountIn);
-        uint256 feeRatio = IFeeAdapter(feeAdapter).poolTotalFeeRatio(pool);
-        uint256 totalFeeAmount = (params.amountOut - amountIn) * feeRatio / FEE_SCALE ;
         (,int24 tickAfterSwap, , , , , ) = SwapPool(pool).slot0();  
-        uint256 ticksCrossed = tickBeforeSwap > tickAfterSwap
-            ? uint256(int256(tickBeforeSwap) - int256(tickAfterSwap))
-            : uint256(int256(tickAfterSwap) - int256(tickBeforeSwap));
-        //dynamic fee
-        // 1. Update pool volatility before trade
-        IFeeManager(feeManager).updateVolatility(pool, tickAfterSwap, ticksCrossed);
-        // 2. Compute fee based on volatility and ticks crossed
-        uint256 dynamicfee = IFeeManager(feeManager).computeFee(pool, ticksCrossed, amountIn);
-        //usdb transfer without fee
-        IERC20(usdbTokenAddress).transfer(permitparams.owner, params.amountOut - amountIn - totalFeeAmount - dynamicfee);
-        //fee transfer
-        IERC20(usdbTokenAddress).transfer(feeAdapter, totalFeeAmount + dynamicfee);
-        referrer = refers[permitparams.owner];
-        IFeeAdapter(feeAdapter).recordFee(pool, referrer, usdbTokenAddress, totalFeeAmount + dynamicfee);
+        uint256 ticksCrossed = _absTickDelta(tickBeforeSwap, tickAfterSwap);
+        uint256 userPayout = params.amountOut - amountIn;
+        _settlePoolFees(pool, permitparams.owner, userPayout, userPayout, amountIn, tickAfterSwap, ticksCrossed);
         sellNoAmount[pool] = sellNoAmount[pool] +  params.amountOut;
         
         sellNoUSD[pool] = sellNoUSD[pool] +  params.amountOut - amountIn;
        
-        _updateExposure(pool);
-        _exposureCheck();
+        _postTradeExposureChecks(pool);
         require(params.amountOut - amountIn >= minAmount,"une");
         //pnl calculation
         UserNoPosition storage pos = userNoPositions[permitparams.owner][pool];
@@ -815,8 +826,8 @@ contract tradeManager is Initializable {
     }
     function _checkaddress(address pool,address tokenIn,address tokenOut,uint24 fee) internal view {
         require(tokenIn == usdbTokenAddress || tokenOut == usdbTokenAddress,"usdbError");
+        require(tokenIn != tokenOut, "sameToken");
         (address token0, address token1) = tokenIn < tokenOut ? (tokenIn, tokenOut) : (tokenOut, tokenIn);
-        require(token0 < token1);
         address expectedPool = address(
             uint160(
                 uint256(
@@ -832,6 +843,11 @@ contract tradeManager is Initializable {
             )
         );
         require(pool == expectedPool, "PM");
+    }
+
+    function _postTradeExposureChecks(address pool) internal {
+        _updateExposure(pool);
+        _exposureCheck();
     }
 
 
@@ -863,19 +879,7 @@ contract tradeManager is Initializable {
 
     //---Exposure---
     function _exposureCalculate(address pool) internal view returns (int256) {
-        uint256 sellyesamount = sellYesAmount[pool];
-        uint256 sellnoamount = sellNoAmount[pool];
-        uint256 buyyesamount = buyYesAmount[pool];
-        
-        uint256 buynoamount = buyNoAmount[pool];
-        uint256 sellyesUSD = sellYesUSD[pool];
-        uint256 sellnoUSD = sellNoUSD[pool];
-        uint256 buyyesUSD = buyYesUSD[pool];
-        
-        uint256 buynoUSD = buyNoUSD[pool];
-        int256 yesAmountDiff = int256(buyyesamount) - int256(sellyesamount);
-        int256 noAmountDiff = int256(buynoamount) - int256(sellnoamount);
-        int256 usdDiff = int256(buyyesUSD) + int256(buynoUSD) - int256(sellyesUSD) - int256(sellnoUSD);
+        (int256 yesAmountDiff, int256 noAmountDiff, int256 usdDiff) = _exposureDiffs(pool);
         int256 yesExposure =  yesAmountDiff - usdDiff;
         int256 noExposure =   noAmountDiff - usdDiff;
         return yesExposure >= noExposure ? yesExposure : noExposure;
@@ -883,18 +887,7 @@ contract tradeManager is Initializable {
     //for pnl calculation
 
     function exposureCalculate(address pool, bool isYes) internal view returns (int256) {
-        uint256 sellyesamount = sellYesAmount[pool];
-        uint256 sellnoamount = sellNoAmount[pool];
-        uint256 buyyesamount = buyYesAmount[pool];
-        uint256 buynoamount = buyNoAmount[pool];
-        uint256 sellyesUSD = sellYesUSD[pool];
-        uint256 sellnoUSD = sellNoUSD[pool];
-        uint256 buyyesUSD = buyYesUSD[pool];
-        uint256 buynoUSD = buyNoUSD[pool];
-
-        int256 yesAmountDiff = int256(buyyesamount) - int256(sellyesamount);
-        int256 noAmountDiff = int256(buynoamount) - int256(sellnoamount);
-        int256 usdDiff = int256(buyyesUSD) + int256(buynoUSD) - int256(sellyesUSD) - int256(sellnoUSD);
+        (int256 yesAmountDiff, int256 noAmountDiff, int256 usdDiff) = _exposureDiffs(pool);
 
         int256 yesExposure = yesAmountDiff - usdDiff;
         int256 noExposure = noAmountDiff - usdDiff;
@@ -904,6 +897,12 @@ contract tradeManager is Initializable {
         } else {
             return noExposure;
         }
+    }
+
+    function _exposureDiffs(address pool) internal view returns (int256 yesAmountDiff, int256 noAmountDiff, int256 usdDiff) {
+        yesAmountDiff = int256(buyYesAmount[pool]) - int256(sellYesAmount[pool]);
+        noAmountDiff = int256(buyNoAmount[pool]) - int256(sellNoAmount[pool]);
+        usdDiff = int256(buyYesUSD[pool]) + int256(buyNoUSD[pool]) - int256(sellYesUSD[pool]) - int256(sellNoUSD[pool]);
     }
     
     function _exposureCheck() internal {
@@ -1004,7 +1003,7 @@ contract tradeManager is Initializable {
         }
     }
     function LPWithdraw(uint256 assets, address receiver,address owner,bool isRisk) public {
-        _withdrawcheck(assets);
+        _withdrawcheck(assets, isRisk);
         require(msg.sender == owner, "NA");
 
         if(isRisk){
@@ -1051,9 +1050,22 @@ contract tradeManager is Initializable {
 
         emit UserWithdraw(owner, receiver, assets);
     }
-    function _withdrawcheck(uint256 assets) internal {
-        int256 dynamicReservedFunds = RiskCoefficient  * _availableFunds() / 1e18;
-        require(dynamicReservedFunds - int256(assets) > totalExposure,'wdc');
+    function _withdrawcheck(uint256 assets, bool isRisk) internal {
+        // Keep interest/PnL state fresh before withdrawal capacity checks.
+        _handleInterest();
+
+        // sBLP acts as the non-risk sleeve and should remain freely withdrawable.
+        if (!isRisk) {
+            return;
+        }
+
+        if (totalExposure <= 0) {
+            return;
+        }
+
+        int256 availableAfterWithdraw = _availableFunds() - int256(assets);
+        require(availableAfterWithdraw >= 0, 'wdc');
+        require((availableAfterWithdraw * int256(RiskCoefficient)) / int256(1e18) >= totalExposure, 'wdc');
     }
     // function setRefer(address user, address referrer) external auth {
     //     require(user != address(0), "Invalid user");
@@ -1065,3 +1077,4 @@ contract tradeManager is Initializable {
     // }
 
 }
+
