@@ -22,6 +22,7 @@ contract FeeRebateDistributor {
     event AuthUpdated(address indexed account, bool allowed);
     event FeeAdapterClaimed(address indexed token, uint256 amount);
     event RebatePaid(address indexed token, address indexed to, uint256 amount);
+    event ReferFeePaid(address indexed token, address indexed to, uint256 amount);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -75,6 +76,41 @@ contract FeeRebateDistributor {
         emit RebatePaid(token, to, amount);
     }
 
+    /// @notice Pay refer fee to a user. Same transfer path as distribute, with dedicated event.
+    function referFeeDistribute(address token, address to, uint256 amount) external onlyAuth {
+        require(to != address(0), "Invalid recipient");
+        require(amount > 0, "Invalid amount");
+
+        _claimIfNeeded(token, amount);
+        _safeTransfer(token, to, amount);
+        emit ReferFeePaid(token, to, amount);
+    }
+
+    /// @notice Batch pay refer fee. Claims once when needed, then pays recipients one by one.
+    function referFeeDistributeBatch(
+        address token,
+        address[] calldata recipients,
+        uint256[] calldata amounts
+    ) external onlyAuth {
+        uint256 len = recipients.length;
+        require(len > 0, "Empty batch");
+        require(len == amounts.length, "Length mismatch");
+
+        uint256 total;
+        for (uint256 i = 0; i < len; i++) {
+            require(recipients[i] != address(0), "Invalid recipient");
+            require(amounts[i] > 0, "Invalid amount");
+            total += amounts[i];
+        }
+
+        _claimIfNeeded(token, total);
+
+        for (uint256 i = 0; i < len; i++) {
+            _safeTransfer(token, recipients[i], amounts[i]);
+            emit ReferFeePaid(token, recipients[i], amounts[i]);
+        }
+    }
+
     function _claimIfNeeded(address token, uint256 amount) internal {
         uint256 bal = IERC20(token).balanceOf(address(this));
         if (bal >= amount) return;
@@ -86,7 +122,7 @@ contract FeeRebateDistributor {
         }
 
         bal = IERC20(token).balanceOf(address(this));
-        require(bal >= amount, "Insufficient rebate balance");
+        require(bal >= amount, "Insufficient fee balance");
     }
 
     function _safeTransfer(address token, address to, uint256 value) internal {

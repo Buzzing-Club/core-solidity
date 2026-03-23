@@ -134,24 +134,24 @@ contract FeeAdapterTransparent is Initializable {
         uint256 totalFeeAmount
     ) external onlyVault {
         uint256 totalRatio = poolTotalFeeRatio[pool];
-        uint256 referRatio = poolReferShare[pool];
-        require(referRatio <= totalRatio, "Refer too large");
+        //uint256 referRatio = poolReferShare[pool];
+        //require(referRatio <= totalRatio, "Refer too large");
 
         uint256 totalFixed = _distributeRoleFee(pool, token, totalFeeAmount, totalRatio);
-        require(totalFixed + referRatio == totalRatio, "Share sum mismatch");
+        require(totalFixed == totalRatio, "Share sum mismatch");
 
-        if (refer != address(0) && referRatio > 0) {
-            uint256 referAmount = (totalFeeAmount * referRatio) / totalRatio;
-            pendingBalances[refer][token] += referAmount;
+        // if (refer != address(0) && referRatio > 0) {
+        //     uint256 referAmount = (totalFeeAmount * referRatio) / totalRatio;
+        //     pendingBalances[refer][token] += referAmount;
 
-            emit FeeRecorded(refer, "REFERRAL", referAmount, pool);
-        }
-        else {
-            uint256 referAmount = (totalFeeAmount * referRatio) / totalRatio;
-            pendingBalances[owner][token] += referAmount;
+        //     emit FeeRecorded(refer, "REFERRAL", referAmount, pool);
+        // }
+        // else {
+        //     uint256 referAmount = (totalFeeAmount * referRatio) / totalRatio;
+        //     pendingBalances[owner][token] += referAmount;
 
-            emit FeeRecorded(owner, "REFERRAL", referAmount, pool);
-        }
+        //     emit FeeRecorded(owner, "REFERRAL", referAmount, pool);
+        // }
     }
 
 
@@ -168,5 +168,15 @@ contract FeeAdapterTransparent is Initializable {
 
     function getFee(address user, address token) external view returns (uint256) {
         return pendingBalances[user][token];
+    }
+
+    /// @notice Emergency transfer of ERC20 tokens held by this contract
+    function emergencyTransferERC20(address token, address to, uint256 amount) external onlyOwner {
+        require(token != address(0), "Invalid token");
+        require(to != address(0), "Invalid recipient");
+        require(amount > 0, "Invalid amount");
+
+        bool ok = IERC20(token).transfer(to, amount);
+        require(ok, "Transfer failed");
     }
 }

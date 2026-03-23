@@ -230,7 +230,6 @@ contract USDB is ERC20 {
     }
     constructor(address _asset) ERC20("USD Buzzing", "USDB", 6) {
         owner = msg.sender;
-        _mint(msg.sender, 100000 ether);
         asset = _asset;
     }
     modifier onlyVault() {

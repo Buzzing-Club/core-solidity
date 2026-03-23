@@ -107,6 +107,7 @@ contract PreTrading {
     );
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event OracleUpdated(address indexed previousOracle, address indexed newOracle);
+    event EmergencyERC20Transferred(address indexed token, address indexed to, uint256 amount);
 
     /* ===================== STORAGE ===================== */
 
@@ -403,5 +404,13 @@ contract PreTrading {
         require(newOracle != address(0), "Invalid oracle");
         emit OracleUpdated(oracle, newOracle);
         oracle = newOracle;
+    }
+
+    function emergencyTransferERC20(address token, address to, uint256 amount) external onlyOwner {
+        require(token != address(0), "Invalid token");
+        require(to != address(0), "Invalid receiver");
+        require(amount > 0, "Zero amount");
+        require(IERC20(token).transfer(to, amount), "Transfer failed");
+        emit EmergencyERC20Transferred(token, to, amount);
     }
 }

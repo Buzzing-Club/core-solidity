@@ -1,0 +1,67 @@
+yarn run v1.22.22
+$ D:\buzzing\node_modules\.bin\hardhat run ./scripts/active-random-yes-trader.js --network basetestnet
+Using report: D:\buzzing\projects\v3-periphery\doc\pretrading-bet-report-20260317-124515.json
+State file: D:\buzzing\projects\v3-periphery\doc\active-random-yes-state.json
+Run report: D:\buzzing\projects\v3-periphery\doc\active-random-yes-run-1773813217983.json
+Progress file: D:\buzzing\projects\v3-periphery\doc\active-random-yes-progress.json
+Target markets: 10
+=== Market URLs ===
+1. https://dev.buzzing.app/app/topic/Will_XTwitter_daily_active_users_grow_YoY_in_2027_2028-01-17_080000
+2. https://dev.buzzing.app/app/topic/Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000
+3. https://dev.buzzing.app/app/topic/Will_AWS_launch_a_new_flagship_AI_accelerator_family_before_2028_2027-12-18_080000
+4. https://dev.buzzing.app/app/topic/Will_global_AI_chip_supply_constraints_ease_by_H2_2027_2027-11-28_080000
+5. https://dev.buzzing.app/app/topic/Will_Olympic_2028_sponsor_revenue_set_a_new_record_before_opening_2027-11-18_080000
+6. https://dev.buzzing.app/app/topic/Will_Formula_1_add_one_new_race_venue_by_2027_season_2027-11-08_080000
+7. https://dev.buzzing.app/app/topic/Will_Premier_League_rights_next_cycle_increase_by_over_15_2027-10-19_080000
+8. https://dev.buzzing.app/app/topic/Will_global_box_office_revenue_recover_above_2019_level_in_2027_2027-10-09_080000
+9. https://dev.buzzing.app/app/topic/Will_YouTube_become_the_largest_TV_streaming_app_by_watch_time_in_2027_2027-09-29_080000
+10. https://dev.buzzing.app/app/topic/Will_Netflix_adtier_users_exceed_100M_by_2027_yearend_2027-09-19_080000
+===================
+=== Active Check ===
+1. Will_XTwitter_daily_active_users_grow_YoY_in_2027_2028-01-17_080000 | status=active | active=true
+2. Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 | status=active | active=true
+3. Will_AWS_launch_a_new_flagship_AI_accelerator_family_before_2028_2027-12-18_080000 | status=active | active=true
+4. Will_global_AI_chip_supply_constraints_ease_by_H2_2027_2027-11-28_080000 | status=active | active=true
+5. Will_Olympic_2028_sponsor_revenue_set_a_new_record_before_opening_2027-11-18_080000 | status=active | active=true
+6. Will_Formula_1_add_one_new_race_venue_by_2027_season_2027-11-08_080000 | status=active | active=true
+7. Will_Premier_League_rights_next_cycle_increase_by_over_15_2027-10-19_080000 | status=active | active=true
+8. Will_global_box_office_revenue_recover_above_2019_level_in_2027_2027-10-09_080000 | status=active | active=true
+9. Will_YouTube_become_the_largest_TV_streaming_app_by_watch_time_in_2027_2027-09-29_080000 | status=active | active=true
+10. Will_Netflix_adtier_users_exceed_100M_by_2027_yearend_2027-09-19_080000 | status=active | active=true
+====================
+
+=== Market Will_XTwitter_daily_active_users_grow_YoY_in_2027_2028-01-17_080000 (200/200) ===
+
+=== Market Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 (33/200) ===
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 buyYes hit boundary; recovery=sellYes, force 3x sellYes.
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] sellYes tx: 0x85575b5d3e8b86579ff008a457227a3e52c1440b23c7d2014c875dae637c57a8
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 recovery finished after sellYes (buyYes probe passed).
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 34/200 (17.00%) | total 234/2000 (11.70%)
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] buyYes $239.52 tx: 0x05e85d481ee8e9c11b97ee88a4d4a7ed6e42366e46f8a9940722dd0db0f19bcd
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 35/200 (17.50%) | total 235/2000 (11.75%)
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] buyYes $79.29 tx: 0x1f1c9f36d38608f0f59a55a71cd763c53631a0efceaa310ac59901c10e1618d6
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 36/200 (18.00%) | total 236/2000 (11.80%)
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 buyYes hit boundary; recovery=sellYes, force 3x sellYes.
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] sellYes tx: 0x09d5dc622ae1fde0284e6ba87882b258ebbcabac777eee05529bef1b88582d1e
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 recovery finished after sellYes (buyYes probe passed).
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 37/200 (18.50%) | total 237/2000 (11.85%)
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] buyYes $196.62 tx: 0xcd7c94f694add1d839889c75e8fad385efc4bf6f896fc73b64f652e2423c9297
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 38/200 (19.00%) | total 238/2000 (11.90%)
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 buyYes hit boundary; recovery=sellYes, force 3x sellYes.
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] sellYes tx: 0x12ffdec194b91166bdffbe3fc4f42de8e64f9f9f119b89aed5c35966113a00ce
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 recovery finished after sellYes (buyYes probe passed).
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 39/200 (19.50%) | total 239/2000 (11.95%)
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] buyYes $195.41 tx: 0xf45c23c0ddc518111054e39404122af345841ff135efc5800b67e695492a1dfa
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 40/200 (20.00%) | total 240/2000 (12.00%)
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 buyYes hit boundary; recovery=sellYes, force 3x sellYes.
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] sellYes tx: 0xf72903f24dde9edefae3e58009d6555ab61b878678e8f4103933c0566fdab636
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 recovery finished after sellYes (buyYes probe passed).
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 41/200 (20.50%) | total 241/2000 (12.05%)
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] buyYes $138.98 tx: 0x1a075864ce7203a33f981eaae8567cf944b5ed387a05012595270be9e76bae4e
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 42/200 (21.00%) | total 242/2000 (12.10%)
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 buyYes hit boundary; recovery=sellYes, force 3x sellYes.
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] sellYes tx: 0x55f1c2c03b19252f19e426f5c5dd0741d5d45a3eaf9d75522d96598c0a7e5912
+[Info] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000 recovery finished after sellYes (buyYes probe passed).
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 43/200 (21.50%) | total 243/2000 (12.15%)
+[Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000] buyYes $95.67 tx: 0x54c4848094f7a5ab697fce16583410a8e1ff91118c64e9e8ad50a79942fbe237
+[Progress] Will_TikTok_global_monthly_active_users_exceed_25B_in_2027_2028-01-07_080000: 44/200 (22.00%) | total 244/2000 (12.20%)
