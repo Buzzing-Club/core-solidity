@@ -326,6 +326,13 @@ contract tradeManager is Initializable {
         address indexed receiver,
         uint256 assets
     );
+    event BLPVaultsUpdated(
+        address indexed operator,
+        address indexed oldTBLP,
+        address indexed newTBLP,
+        address oldSBLP,
+        address newSBLP
+    );
 
     // --- Modifiers ---
 
@@ -345,6 +352,14 @@ contract tradeManager is Initializable {
     }
     function setFeeManager(address _feeManager) auth external {
         feeManager = _feeManager;
+    }
+    function setBLPVaults(address _tBLP, address _sBLP) auth external {
+        require(_tBLP != address(0) && _sBLP != address(0), "IA");
+        address oldTBLP = tBLP;
+        address oldSBLP = sBLP;
+        tBLP = _tBLP;
+        sBLP = _sBLP;
+        emit BLPVaultsUpdated(msg.sender, oldTBLP, _tBLP, oldSBLP, _sBLP);
     }
 
     // --- Admin external functions ---

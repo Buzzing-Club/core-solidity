@@ -117,6 +117,7 @@ contract PreTrading {
     mapping(bytes32 => uint256) public totalYesUSD;
     mapping(bytes32 => uint256) public totalNoUSD;
     mapping(bytes32 => uint256) public totalUSD;
+    mapping(bytes32 => uint256) public marketTransferThresholdByCondition;
 
     uint256 public marketFeeUSD;
 
@@ -151,6 +152,8 @@ contract PreTrading {
         require(amount > 0, "Zero amount");
         require(amount >= MIN_BET_USDB, "Bet too small");
         require(marketStatus[conditionId] == MarketStatus.OPEN, "Market not open");
+        uint256 threshold = marketTransferThresholdByCondition[conditionId];
+        require(threshold > 0, "Market threshold not set");
 
         require(usdb.transferFrom(msg.sender, address(this), amount), "Transfer failed");
 
@@ -168,7 +171,7 @@ contract PreTrading {
         
         emit Deposit(conditionId, msg.sender, isYes, amount,totalUSD[conditionId]);
         
-        if (totalUSD[conditionId] >= marketTransferThreshold) {
+        if (totalUSD[conditionId] >= threshold) {
             marketStatus[conditionId] = MarketStatus.TERMINATED;
             emit MarketTerminated(conditionId,totalUSD[conditionId]);
         }
@@ -310,6 +313,10 @@ contract PreTrading {
         marketStatus[conditionId] = status;
 
         emit MarketUnset(conditionId, status);
+    }
+
+    function setMarketTransferThreshold(bytes32 conditionId, uint256 threshold) external onlyOracle {
+        marketTransferThresholdByCondition[conditionId] = threshold;
     }
 
     /* ===================================================== */

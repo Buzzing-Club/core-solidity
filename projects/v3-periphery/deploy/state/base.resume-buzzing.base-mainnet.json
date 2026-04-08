@@ -14,15 +14,17 @@
     "ctf": "0x4bC1A3BEE6200790d32Cb28B01eAFf4634B328c3",
     "USDC": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     "USDB": "0x89401d7C5F5Cf4936F10418B9C536f97b0bCf71B",
-    "tBLPProxy": "0xaaF4C01F8f35e2563C2334802CcE13D09C9256f4",
-    "sBLPProxy": "0x2A149d1b7Cb2cFBd8AF7ea0c816ebaB85bd7Cc45",
+    "tBLPProxy": "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3",
+    "sBLPProxy": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB",
     "tradeManagerProxy": "0x4a8793AE855AE40A00504D61d2ac4074B5214669",
     "feeAdapterProxy": "0xE454a76dA1Ec485061488d8c272D2154bf1ddf4F",
     "dynamicFeeManager": "0x236e856418ffF886efBA88ba6c79fd6543aaFD24",
     "feeRebateDistributor": "0x4F0077104Ca290cC4D26E0877033b8330334081F",
     "contractFactory": "0x179365245C424453C51F2f34b0AA2C51fC32EaCC",
-    "preTrading": "0x33dCFc0c163B7309422beD6d6BBf73DA946c0284",
-    "sUsds": "0x3128a0f7f0ea68e7b7c9b00afa7e41045828e858"
+    "preTrading": "0x72a7D9D623840a9eF1BF8865DD19C5cbc67194d5",
+    "sUsds": "0x3128a0f7f0ea68e7b7c9b00afa7e41045828e858",
+    "tBLPProxy_20260407-125944Z": "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3",
+    "sBLPProxy_20260407-125944Z": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB"
   },
   "flags": {
     "usdbPrefundDone": false,
@@ -57,7 +59,28 @@
     "externalUSDC": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     "externalSUSDC": "0x3128a0f7f0ea68e7b7c9b00afa7e41045828e858",
     "preTradingThresholdRaw": "1000000000",
-    "enablePrefund": false
+    "enablePrefund": false,
+    "lastBLPVaultRedeploy": {
+      "tag": "20260407-125944Z",
+      "at": "2026-04-07T13:00:17.111Z",
+      "by": "0x54fa4358330136332430e779BeaAD0CbA1404eAf",
+      "usdb": "0x89401d7C5F5Cf4936F10418B9C536f97b0bCf71B",
+      "tradeManagerProxy": "0x4a8793AE855AE40A00504D61d2ac4074B5214669",
+      "tBLPProxy": "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3",
+      "sBLPProxy": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB",
+      "switchTradeManager": false,
+      "switchTxHash": ""
+    },
+    "lastTradeManagerUpgrade": {
+      "at": "2026-04-07T13:06:57.892Z",
+      "by": "0x54fa4358330136332430e779BeaAD0CbA1404eAf",
+      "proxy": "0x4a8793AE855AE40A00504D61d2ac4074B5214669",
+      "implBefore": "0xEDdb069712FB52B6259FeF52E8563540A829048F",
+      "implAfter": "0xb2b9eeD503de2bb45b9925FaD2cb9dfc472b1514",
+      "setBLPVaultsTx": "0x6b2f1068abcd77d0ef20f7417f790148f6449f722f517444df048611641cee54",
+      "tBLP": "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3",
+      "sBLP": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB"
+    }
   },
-  "updatedAt": "2026-03-18T16:51:01.990Z"
+  "updatedAt": "2026-04-07T13:06:57.892Z"
 }
