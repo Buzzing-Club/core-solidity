@@ -31,6 +31,28 @@ const PRETRADING_DEFAULTS = {
   thresholdRaw: "1000000000", // 1000 USDB with 6 decimals
 };
 
+function normalizeDeployEnv(raw) {
+  const value = String(raw || "").trim();
+  if (!value) return "";
+
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  if (!normalized) {
+    throw new Error(`DEPLOY_ENV="${raw}" is invalid after normalization`);
+  }
+  return normalized;
+}
+
+function buildStatePath(deployDir, networkName, deployEnv, stateTag) {
+  const filename = deployEnv
+    ? `${networkName}.${deployEnv}.${stateTag}.json`
+    : `${networkName}.${stateTag}.json`;
+  return path.join(deployDir, filename);
+}
+
 function lower(addr) {
   return addr.toLowerCase();
 }
@@ -107,10 +129,11 @@ async function main() {
   const network = await ethers.provider.getNetwork();
   const chainId = Number(network.chainId);
   const networkName = hre.network.name;
+  const deployEnv = normalizeDeployEnv(process.env.DEPLOY_ENV);
 
   const deployDir = path.join(__dirname, "state");
   ensureDir(deployDir);
-  const statePath = path.join(deployDir, `${networkName}.resume-buzzing.json`);
+  const statePath = buildStatePath(deployDir, networkName, deployEnv, "resume-buzzing");
 
   if (process.env.RESET_DEPLOY_STATE === "1" && fs.existsSync(statePath)) {
     fs.unlinkSync(statePath);
@@ -119,8 +142,10 @@ async function main() {
   const state = loadState(statePath);
   logCheck("state.load", fs.existsSync(statePath) ? `loaded ${statePath}` : `new state ${statePath}`);
   state.meta = {
+    ...(state.meta || {}),
     networkName,
     chainId,
+    deployEnv: deployEnv || "default",
     deployer: defaultSigner.address,
   };
   saveState(statePath, state);
@@ -132,6 +157,7 @@ async function main() {
   }
 
   console.log(`network:  ${networkName} (${chainId})`);
+  console.log(`env:      ${deployEnv || "default"}`);
   console.log(`deployer: ${signer.address}`);
   console.log(`state:    ${statePath}`);
 
@@ -416,14 +442,15 @@ async function main() {
     process.env.PRETRADING_THRESHOLD_RAW || PRETRADING_DEFAULTS.thresholdRaw
   );
   const preTradingAddress = await getOrDeployContract(state, "preTrading", ethers.provider, async () => {
-    const c = await (await ethers.getContractFactory("PreTrading", signer)).deploy(
-      usdbAddress,
-      signer.address,
-      preTradingThresholdRaw
+    const factory = await ethers.getContractFactory("PreTrading", signer);
+    const proxy = await upgrades.deployProxy(
+      factory,
+      [usdbAddress, signer.address, preTradingThresholdRaw],
+      { initializer: "initialize", kind: "transparent" }
     );
-    await c.deployed();
-    console.log("deployed preTrading:", c.address);
-    return c.address;
+    await proxy.deployed();
+    console.log("deployed preTrading:", proxy.address);
+    return proxy.address;
   });
   state.meta.preTradingThresholdRaw = preTradingThresholdRaw.toString();
   saveState(statePath, state);

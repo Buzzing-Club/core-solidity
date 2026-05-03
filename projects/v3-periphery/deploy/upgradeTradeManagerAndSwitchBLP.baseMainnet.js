@@ -8,6 +8,28 @@ const TM_PROXY = "0x4a8793AE855AE40A00504D61d2ac4074B5214669";
 const NEW_TBLP = "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3";
 const NEW_SBLP = "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB";
 
+function normalizeDeployEnv(raw) {
+  const value = String(raw || "").trim();
+  if (!value) return "";
+
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  if (!normalized) {
+    throw new Error(`DEPLOY_ENV="${raw}" is invalid after normalization`);
+  }
+  return normalized;
+}
+
+function buildStatePath(deployDir, networkName, deployEnv, stateTag) {
+  const filename = deployEnv
+    ? `${networkName}.${deployEnv}.${stateTag}.json`
+    : `${networkName}.${stateTag}.json`;
+  return path.join(deployDir, filename);
+}
+
 function ensureAddr(name, value) {
   if (!ethers.utils.isAddress(value)) {
     throw new Error(`${name} is not a valid address: ${value}`);
@@ -37,6 +59,7 @@ async function main() {
   const network = await ethers.provider.getNetwork();
   const chainId = Number(network.chainId);
   const networkName = hre.network.name;
+  const deployEnv = normalizeDeployEnv(process.env.DEPLOY_ENV);
 
   if (chainId !== BASE_MAINNET_CHAIN_ID) {
     throw new Error(`This script is for Base mainnet only. Expected chainId=8453, got ${chainId}`);
@@ -47,7 +70,7 @@ async function main() {
   ensureAddr("NEW_SBLP", NEW_SBLP);
 
   const deployDir = path.join(__dirname, "state");
-  const statePath = path.join(deployDir, `${networkName}.resume-buzzing.base-mainnet.json`);
+  const statePath = buildStatePath(deployDir, networkName, deployEnv, "resume-buzzing.base-mainnet");
   const state = loadState(statePath);
 
   const tmAbi = [
@@ -59,6 +82,7 @@ async function main() {
   const tAbi = ["function pnlHandler() view returns (address)"];
 
   console.log(`network:  ${networkName} (${chainId})`);
+  console.log(`env:      ${deployEnv || "default"}`);
   console.log(`signer:   ${signer.address}`);
   console.log(`tmProxy:  ${TM_PROXY}`);
   console.log(`new tBLP: ${NEW_TBLP}`);
@@ -116,6 +140,7 @@ async function main() {
   state.contracts.tradeManagerProxy = TM_PROXY;
   state.contracts.tBLPProxy = NEW_TBLP;
   state.contracts.sBLPProxy = NEW_SBLP;
+  state.meta.deployEnv = deployEnv || "default";
   state.meta.lastTradeManagerUpgrade = {
     at: new Date().toISOString(),
     by: signer.address,
@@ -134,4 +159,3 @@ main().catch((error) => {
   console.error("upgradeTradeManagerAndSwitchBLP.baseMainnet failed:", error);
   process.exitCode = 1;
 });
-

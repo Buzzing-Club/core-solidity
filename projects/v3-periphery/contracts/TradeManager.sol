@@ -828,12 +828,12 @@ contract tradeManager is Initializable {
         token0 = SwapPool(pool).token0();
 
         if (token0 == usdbTokenAddress) {
-            //usdb is token0, base token , price -> 1 means tick < 0
-            require(tickAfter > 0 ,"t<0");
+            // usdb is token0, allow the boundary tick (tick == 0).
+            require(tickAfter >= 0 ,"t<0");
         }
         else{
-            //usdb is token1, quote token, price ->1 means tick > 0
-            require(tickAfter < 0, "t>0");
+            // usdb is token1, allow the boundary tick (tick == 0).
+            require(tickAfter <= 0, "t>0");
         }
     }
     function _checkPool(address pool) internal {

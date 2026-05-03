@@ -14,17 +14,15 @@
     "ctf": "0x4bC1A3BEE6200790d32Cb28B01eAFf4634B328c3",
     "USDC": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     "USDB": "0x89401d7C5F5Cf4936F10418B9C536f97b0bCf71B",
-    "tBLPProxy": "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3",
-    "sBLPProxy": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB",
     "tradeManagerProxy": "0x4a8793AE855AE40A00504D61d2ac4074B5214669",
     "feeAdapterProxy": "0xE454a76dA1Ec485061488d8c272D2154bf1ddf4F",
     "dynamicFeeManager": "0x236e856418ffF886efBA88ba6c79fd6543aaFD24",
     "feeRebateDistributor": "0x4F0077104Ca290cC4D26E0877033b8330334081F",
     "contractFactory": "0x179365245C424453C51F2f34b0AA2C51fC32EaCC",
-    "preTrading": "0x72a7D9D623840a9eF1BF8865DD19C5cbc67194d5",
+    "preTrading": "0xd53c2Eeb5966108bbb74e4e427321271a2f8fFaf",
     "sUsds": "0x3128a0f7f0ea68e7b7c9b00afa7e41045828e858",
-    "tBLPProxy_20260407-125944Z": "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3",
-    "sBLPProxy_20260407-125944Z": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB"
+    "tBLPProxy": "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3",
+    "sBLPProxy": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB"
   },
   "flags": {
     "usdbPrefundDone": false,
@@ -80,7 +78,28 @@
       "setBLPVaultsTx": "0x6b2f1068abcd77d0ef20f7417f790148f6449f722f517444df048611641cee54",
       "tBLP": "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3",
       "sBLP": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB"
+    },
+    "lastPreTradingRedeploy": {
+      "at": "2026-04-08T07:10:20.567Z",
+      "by": "0x54fa4358330136332430e779BeaAD0CbA1404eAf",
+      "previousPreTrading": "0x72a7D9D623840a9eF1BF8865DD19C5cbc67194d5",
+      "newPreTrading": "0xd53c2Eeb5966108bbb74e4e427321271a2f8fFaf",
+      "deployTx": "0xc5ce91606311107e530c6bb4c04a7a0a3d31b9eee67d4df56008ded8388a2f8c",
+      "usdb": "0x89401d7C5F5Cf4936F10418B9C536f97b0bCf71B",
+      "oracle": "0xd1729ee9687408544e5e91c0220c5b2e69EfF2Ac",
+      "thresholdRaw": "1000000000"
+    },
+    "lastBLPImplUpgrade": {
+      "at": "2026-04-17T05:29:13.010Z",
+      "by": "0x54fa4358330136332430e779BeaAD0CbA1404eAf",
+      "tBLPProxy": "0x1DBC025A07c904F876946C98dfa3B36dAc365Ca3",
+      "sBLPProxy": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB",
+      "tImplAfter": "0x6e1f958c092Ce96A29b9ac126899882Bd07d0429",
+      "sImplAfter": "0xB697820ad863b4288693a09CC1Ae5b5A2463D781",
+      "tUpgradeTx": "0xe5aab6d48536e2b0dc6fe021d090d14c3ff0500b4e361b08edb71a1ab9a54b3f",
+      "sUpgradeTx": "0xcc89c3acd587ab8d427a40aaf16b9d71029e7c8528af38f9389b7505073dd62b",
+      "note": "No tradeManager switch; proxy addresses unchanged."
     }
   },
-  "updatedAt": "2026-04-07T13:06:57.892Z"
+  "updatedAt": "2026-04-17T05:29:13.011Z"
 }

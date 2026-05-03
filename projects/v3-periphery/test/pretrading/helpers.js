@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 
 const WITHDRAW_FEE_BPS = 500;
 const PROFIT_FEE_BPS = 500;
@@ -39,10 +39,11 @@ async function deployPreTradingFixture(threshold = usdcAmount(1000000)) {
   const usdc = await (await ethers.getContractFactory("USDC", owner)).deploy();
   await usdc.deployed();
 
-  const preTrading = await (await ethers.getContractFactory("PreTrading", owner)).deploy(
-    usdc.address,
-    oracle.address,
-    threshold
+  const preTradingFactory = await ethers.getContractFactory("PreTrading", owner);
+  const preTrading = await upgrades.deployProxy(
+    preTradingFactory,
+    [usdc.address, oracle.address, threshold],
+    { initializer: "initialize", kind: "transparent" }
   );
   await preTrading.deployed();
 
@@ -63,4 +64,3 @@ module.exports = {
   calcNetPayout,
   deployPreTradingFixture,
 };
-

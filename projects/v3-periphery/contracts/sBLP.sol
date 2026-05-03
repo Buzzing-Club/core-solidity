@@ -200,17 +200,14 @@ contract sBLP is ERC20Upgradeable, ERC4626Upgradeable,IBLPToken {
     function scaleVariables(uint256 shares, uint256 assets, bool isDeposit) private {
         uint256 supply = totalSupply();
 
-        if (accPnlPerToken < 0) {
-            if (!isDeposit && shares == supply) {
-                accPnlPerToken = 0;
-                updateShareToAssetsPrice();
-                totalDeposited = totalDeposited - assets;
-                return;
-            }
-            accPnlPerToken =
-                (accPnlPerToken * int256(supply)) /
-                (isDeposit ? int256(supply + shares) : int256(supply - shares));
-        } 
+        // Keep deposit/withdraw price-neutral: these flows only move shares/assets
+        // and must not alter pnl-per-share accounting.
+        if (!isDeposit && shares == supply) {
+            accPnlPerToken = 0;
+            updateShareToAssetsPrice();
+            totalDeposited = 0;
+            return;
+        }
 
         totalDeposited = isDeposit ? totalDeposited + assets : totalDeposited - assets;
     }

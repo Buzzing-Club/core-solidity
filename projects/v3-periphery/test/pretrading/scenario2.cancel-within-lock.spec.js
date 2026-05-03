@@ -6,8 +6,9 @@ describe("PreTrading Scenario 2", function () {
   const loadFixture = createFixtureLoader();
 
   it("multiple users withdraw/cancel flow, claimWithdraw should fail during lock period", async function () {
-    const { u1, u2, u3, preTrading } = await loadFixture(() => deployPreTradingFixture());
+    const { oracle, u1, u2, u3, preTrading } = await loadFixture(() => deployPreTradingFixture());
     const cond = ethers.utils.formatBytes32String("LOCK_TEST");
+    await (await preTrading.connect(oracle).setMarketTransferThreshold(cond, usdcAmount(1000000))).wait();
 
     await (await preTrading.connect(u1).deposit(cond, true, usdcAmount(500))).wait();
     await (await preTrading.connect(u2).deposit(cond, false, usdcAmount(400))).wait();
@@ -26,4 +27,3 @@ describe("PreTrading Scenario 2", function () {
     await expect(preTrading.connect(u2).claimWithdraw(cond, false)).to.be.revertedWith("No NO pending");
   });
 });
-

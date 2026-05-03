@@ -14,6 +14,10 @@ describe("PreTrading Scenario 1", function () {
     const { oracle, u1, u2, u3, usdc, preTrading } = await loadFixture(() => deployPreTradingFixture());
     const condYes = ethers.utils.formatBytes32String("COND_YES");
     const condNo = ethers.utils.formatBytes32String("COND_NO");
+    const threshold = usdcAmount(1000000);
+
+    await (await preTrading.connect(oracle).setMarketTransferThreshold(condYes, threshold)).wait();
+    await (await preTrading.connect(oracle).setMarketTransferThreshold(condNo, threshold)).wait();
 
     const aYesU1 = usdcAmount(200);
     const aYesU2 = usdcAmount(300);
@@ -64,4 +68,3 @@ describe("PreTrading Scenario 1", function () {
     await expect(preTrading.connect(u1).claim(condNo)).to.be.revertedWith("No winning position");
   });
 });
-

@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "./openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+
 interface IERC20 {
     function transferFrom(address from, address to, uint256 amount) external returns (bool);
     function transfer(address to, uint256 amount) external returns (bool);
 }
 
-contract PreTrading {
-    IERC20 public immutable usdb;
+contract PreTrading is Initializable {
+    IERC20 public usdb;
     address public oracle;
     address public owner;
 
@@ -15,7 +17,7 @@ contract PreTrading {
     uint256 public constant WITHDRAW_FEE_BPS = 500; // 5%
     uint256 public constant PROFIT_FEE_BPS = 500; // 5%
     uint256 public constant BPS_DENOM = 10_000;
-    uint256 public WITHDRAW_DELAY = 1 days;
+    uint256 public WITHDRAW_DELAY;
 
     uint256 public marketTransferThreshold;
 
@@ -135,12 +137,20 @@ contract PreTrading {
         _;
     }
 
-    /* ===================== CONSTRUCTOR ===================== */
+    /* ===================== INITIALIZER ===================== */
 
-    constructor(address _usdb, address _oracle, uint256 _threshold) {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(address _usdb, address _oracle, uint256 _threshold) external initializer {
+        require(_usdb != address(0), "Invalid usdb");
+        require(_oracle != address(0), "Invalid oracle");
         usdb = IERC20(_usdb);
         oracle = _oracle;
         marketTransferThreshold = _threshold;
+        WITHDRAW_DELAY = 1 days;
         owner = msg.sender;
     }
 
@@ -285,10 +295,8 @@ contract PreTrading {
             p.noWithdrawAvailableAt = 0;
         }
 
-        uint256 fee = (amount * WITHDRAW_FEE_BPS) / BPS_DENOM;
-        uint256 receiveAmount = amount - fee;
-
-        marketFeeUSD += fee;
+        uint256 fee = 0;
+        uint256 receiveAmount = amount;
 
         require(usdb.transfer(msg.sender, receiveAmount), "Transfer failed");
 

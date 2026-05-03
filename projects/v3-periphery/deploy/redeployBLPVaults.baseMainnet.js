@@ -6,6 +6,28 @@ const path = require("path");
 const BASE_MAINNET_CHAIN_ID = 8453;
 const ZERO_ADDRESS = ethers.constants.AddressZero;
 
+function normalizeDeployEnv(raw) {
+  const value = String(raw || "").trim();
+  if (!value) return "";
+
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  if (!normalized) {
+    throw new Error(`DEPLOY_ENV="${raw}" is invalid after normalization`);
+  }
+  return normalized;
+}
+
+function buildStatePath(deployDir, networkName, deployEnv, stateTag) {
+  const filename = deployEnv
+    ? `${networkName}.${deployEnv}.${stateTag}.json`
+    : `${networkName}.${stateTag}.json`;
+  return path.join(deployDir, filename);
+}
+
 function lower(addr) {
   return String(addr).toLowerCase();
 }
@@ -72,6 +94,7 @@ async function main() {
   const network = await ethers.provider.getNetwork();
   const chainId = Number(network.chainId);
   const networkName = hre.network.name;
+  const deployEnv = normalizeDeployEnv(process.env.DEPLOY_ENV);
 
   if (chainId !== BASE_MAINNET_CHAIN_ID) {
     throw new Error(`This script is for Base mainnet only. Expected chainId=8453, got ${chainId}`);
@@ -79,7 +102,7 @@ async function main() {
 
   const deployDir = path.join(__dirname, "state");
   ensureDir(deployDir);
-  const statePath = path.join(deployDir, `${networkName}.resume-buzzing.base-mainnet.json`);
+  const statePath = buildStatePath(deployDir, networkName, deployEnv, "resume-buzzing.base-mainnet");
   const state = loadState(statePath);
 
   const switchTradeManager = envBool("SWITCH_TRADEMANAGER", false);
@@ -101,6 +124,7 @@ async function main() {
   }
 
   console.log(`network:             ${networkName} (${chainId})`);
+  console.log(`env:                 ${deployEnv || "default"}`);
   console.log(`deployer:            ${signer.address}`);
   console.log(`state:               ${statePath}`);
   console.log(`USDB:                ${usdbAddress}`);
@@ -176,6 +200,7 @@ async function main() {
   // 4) Persist migration snapshot into state.
   state.contracts = state.contracts || {};
   state.meta = state.meta || {};
+  state.meta.deployEnv = deployEnv || "default";
 
   const tTagKey = `tBLPProxy_${tag}`;
   const sTagKey = `sBLPProxy_${tag}`;
@@ -211,4 +236,3 @@ main().catch((error) => {
   console.error("redeployBLPVaults.baseMainnet failed:", error);
   process.exitCode = 1;
 });
-

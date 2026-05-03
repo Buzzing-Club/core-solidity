@@ -89,6 +89,11 @@
       "address": "0x360A3417a4192B6D49a31c1AcabB59E10Da29dfB",
       "txHash": "0x4efd35aa5e41a51f481bf87a78f05d09d8548a607a84dff01a3126277c31f183",
       "kind": "transparent"
+    },
+    {
+      "address": "0xd53c2Eeb5966108bbb74e4e427321271a2f8fFaf",
+      "txHash": "0xc5ce91606311107e530c6bb4c04a7a0a3d31b9eee67d4df56008ded8388a2f8c",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -2597,6 +2602,850 @@
     "93801f55008163d70540c9bfb3759b0046e1b95aa6bbeb1e9f5a318d51af96c8": {
       "address": "0xb2b9eeD503de2bb45b9925FaD2cb9dfc472b1514",
       "txHash": "0x9308b09700a65ce357cc11de38e1e08759ae3931d535d3880ad49fd34d6b8ebd",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "contract": "tradeManager",
+            "label": "wards",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:251"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "PRECISION",
+            "type": "t_uint256",
+            "src": "contracts\\TradeManager.sol:254"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "reportCount",
+            "type": "t_uint256",
+            "src": "contracts\\TradeManager.sol:255"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "usdb",
+            "type": "t_contract(UsdbLike)221",
+            "src": "contracts\\TradeManager.sol:260"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "NonfungiblePositionManager",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:264"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "SwapRouter",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:265"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "usdbTokenAddress",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:266"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "ctfAddress",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:267"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "feeAdapter",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:268"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "feeManager",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:269"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "yieldProtocol",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:270"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "erc1155Factory",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:271"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "deployer",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:272"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "yieldPrincipal",
+            "type": "t_uint256",
+            "src": "contracts\\TradeManager.sol:273"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "yieldPrincipalUsed",
+            "type": "t_uint256",
+            "src": "contracts\\TradeManager.sol:274"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "totalExposure",
+            "type": "t_int256",
+            "src": "contracts\\TradeManager.sol:275"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "totalPnl",
+            "type": "t_int256",
+            "src": "contracts\\TradeManager.sol:276"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "bufferFunds",
+            "type": "t_uint256",
+            "src": "contracts\\TradeManager.sol:277"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "yieldInterest",
+            "type": "t_uint256",
+            "src": "contracts\\TradeManager.sol:278"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "usdc",
+            "type": "t_contract(IERC20)180",
+            "src": "contracts\\TradeManager.sol:279"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sellYesAmount",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:280"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sellNoAmount",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:281"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "buyYesAmount",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:282"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "buyNoAmount",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:283"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sellYesUSD",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:284"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sellNoUSD",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:285"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "buyYesUSD",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:286"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "buyNoUSD",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:287"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "marketExposure",
+            "type": "t_mapping(t_address,t_int256)",
+            "src": "contracts\\TradeManager.sol:288"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "marketUSDB",
+            "type": "t_mapping(t_address,t_int256)",
+            "src": "contracts\\TradeManager.sol:289"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "userRiskFreePrincipal",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:290"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "userRiskPrincipal",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:291"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "userYesPositions",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_struct(UserYesPosition)559_storage))",
+            "src": "contracts\\TradeManager.sol:292"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "userNoPositions",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_struct(UserNoPosition)564_storage))",
+            "src": "contracts\\TradeManager.sol:293"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "reportedCounts",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\TradeManager.sol:294"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "refers",
+            "type": "t_mapping(t_address,t_address)",
+            "src": "contracts\\TradeManager.sol:295"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "tBLP",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:297"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "sBLP",
+            "type": "t_address",
+            "src": "contracts\\TradeManager.sol:298"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "RiskCoefficient",
+            "type": "t_int256",
+            "src": "contracts\\TradeManager.sol:299"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "riskThreshold",
+            "type": "t_int256",
+            "src": "contracts\\TradeManager.sol:300"
+          },
+          {
+            "contract": "tradeManager",
+            "label": "tokenOwnership",
+            "type": "t_mapping(t_uint256,t_address)",
+            "src": "contracts\\TradeManager.sol:302"
+          }
+        ],
+        "types": {
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(UsdbLike)221": {
+            "label": "contract UsdbLike"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_contract(IERC20)180": {
+            "label": "contract IERC20"
+          },
+          "t_mapping(t_address,t_int256)": {
+            "label": "mapping(address => int256)"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_struct(UserYesPosition)559_storage))": {
+            "label": "mapping(address => mapping(address => struct UserYesPosition))"
+          },
+          "t_mapping(t_address,t_struct(UserYesPosition)559_storage)": {
+            "label": "mapping(address => struct UserYesPosition)"
+          },
+          "t_struct(UserYesPosition)559_storage": {
+            "label": "struct UserYesPosition",
+            "members": [
+              {
+                "label": "yesTokenAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "usdSpent",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_struct(UserNoPosition)564_storage))": {
+            "label": "mapping(address => mapping(address => struct UserNoPosition))"
+          },
+          "t_mapping(t_address,t_struct(UserNoPosition)564_storage)": {
+            "label": "mapping(address => struct UserNoPosition)"
+          },
+          "t_struct(UserNoPosition)564_storage": {
+            "label": "struct UserNoPosition",
+            "members": [
+              {
+                "label": "noTokenAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "usdSpent",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)"
+          }
+        }
+      }
+    },
+    "6ffb26b035ce21b05392f940a79e79f389e726e4bb38386537f214ef730c0b6e": {
+      "address": "0x2F7a64A868f3890F9342a891d80af3e326c7F212",
+      "txHash": "0x6cac0a4d6f506c2b681c92a7a3e1df30929e1fa6e3df07a9ebfd5b0842b0391a",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "contract": "PreTrading",
+            "label": "usdb",
+            "type": "t_contract(IERC20)23",
+            "src": "contracts\\PreTrading.sol:12"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "oracle",
+            "type": "t_address",
+            "src": "contracts\\PreTrading.sol:13"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "owner",
+            "type": "t_address",
+            "src": "contracts\\PreTrading.sol:14"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "WITHDRAW_DELAY",
+            "type": "t_uint256",
+            "src": "contracts\\PreTrading.sol:20"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "marketTransferThreshold",
+            "type": "t_uint256",
+            "src": "contracts\\PreTrading.sol:22"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "marketStatus",
+            "type": "t_mapping(t_bytes32,t_enum(MarketStatus)54)",
+            "src": "contracts\\PreTrading.sol:116"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "marketResult",
+            "type": "t_mapping(t_bytes32,t_enum(MarketResult)58)",
+            "src": "contracts\\PreTrading.sol:117"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "totalYesUSD",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\PreTrading.sol:119"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "totalNoUSD",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\PreTrading.sol:120"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "totalUSD",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\PreTrading.sol:121"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "marketTransferThresholdByCondition",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\PreTrading.sol:122"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "marketFeeUSD",
+            "type": "t_uint256",
+            "src": "contracts\\PreTrading.sol:124"
+          },
+          {
+            "contract": "PreTrading",
+            "label": "positions",
+            "type": "t_mapping(t_bytes32,t_mapping(t_address,t_struct(Position)73_storage))",
+            "src": "contracts\\PreTrading.sol:126"
+          }
+        ],
+        "types": {
+          "t_contract(IERC20)23": {
+            "label": "contract IERC20"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_bytes32,t_enum(MarketStatus)54)": {
+            "label": "mapping(bytes32 => enum PreTrading.MarketStatus)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_enum(MarketStatus)54": {
+            "label": "enum PreTrading.MarketStatus",
+            "members": [
+              "OPEN",
+              "TERMINATED",
+              "RESOLVED"
+            ]
+          },
+          "t_mapping(t_bytes32,t_enum(MarketResult)58)": {
+            "label": "mapping(bytes32 => enum PreTrading.MarketResult)"
+          },
+          "t_enum(MarketResult)58": {
+            "label": "enum PreTrading.MarketResult",
+            "members": [
+              "UNSET",
+              "YES",
+              "NO"
+            ]
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_mapping(t_bytes32,t_mapping(t_address,t_struct(Position)73_storage))": {
+            "label": "mapping(bytes32 => mapping(address => struct PreTrading.Position))"
+          },
+          "t_mapping(t_address,t_struct(Position)73_storage)": {
+            "label": "mapping(address => struct PreTrading.Position)"
+          },
+          "t_struct(Position)73_storage": {
+            "label": "struct PreTrading.Position",
+            "members": [
+              {
+                "label": "yesUSDAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "noUSDAmount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "yesPendingWithdraw",
+                "type": "t_uint256"
+              },
+              {
+                "label": "noPendingWithdraw",
+                "type": "t_uint256"
+              },
+              {
+                "label": "yesWithdrawAvailableAt",
+                "type": "t_uint256"
+              },
+              {
+                "label": "noWithdrawAvailableAt",
+                "type": "t_uint256"
+              },
+              {
+                "label": "claimed",
+                "type": "t_bool"
+              }
+            ]
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "ccef656db2237e8117e283345e23edb3f876c33b2b2beed066c11c8aaa30cd73": {
+      "address": "0x6e1f958c092Ce96A29b9ac126899882Bd07d0429",
+      "txHash": "0xb0965a241449850254f9cc4a6e9be5cfc86407276c175360434299205d6089e4",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_uint8",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\proxy\\utils\\Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\proxy\\utils\\Initializable.sol:68"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\utils\\ContextUpgradeable.sol:40"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_balances",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:40"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_allowances",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:42"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_totalSupply",
+            "type": "t_uint256",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:44"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_name",
+            "type": "t_string_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:46"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_symbol",
+            "type": "t_string_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:47"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)45_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:376"
+          },
+          {
+            "contract": "ERC4626Upgradeable",
+            "label": "_asset",
+            "type": "t_contract(IERC20Upgradeable)1432",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\extensions\\ERC4626Upgradeable.sol:54"
+          },
+          {
+            "contract": "ERC4626Upgradeable",
+            "label": "_underlyingDecimals",
+            "type": "t_uint8",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\extensions\\ERC4626Upgradeable.sol:55"
+          },
+          {
+            "contract": "ERC4626Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\extensions\\ERC4626Upgradeable.sol:267"
+          },
+          {
+            "contract": "tBLP",
+            "label": "wards",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\tBLP.sol:34"
+          },
+          {
+            "contract": "tBLP",
+            "label": "usdb",
+            "type": "t_contract(UsdbLike)3858",
+            "src": "contracts\\tBLP.sol:36"
+          },
+          {
+            "contract": "tBLP",
+            "label": "usdbTokenAddress",
+            "type": "t_address",
+            "src": "contracts\\tBLP.sol:37"
+          },
+          {
+            "contract": "tBLP",
+            "label": "pnlHandler",
+            "type": "t_address",
+            "src": "contracts\\tBLP.sol:38"
+          },
+          {
+            "contract": "tBLP",
+            "label": "shareToAssetsPrice",
+            "type": "t_uint256",
+            "src": "contracts\\tBLP.sol:41"
+          },
+          {
+            "contract": "tBLP",
+            "label": "accPnlPerTokenUsed",
+            "type": "t_int256",
+            "src": "contracts\\tBLP.sol:42"
+          },
+          {
+            "contract": "tBLP",
+            "label": "accPnlPerToken",
+            "type": "t_int256",
+            "src": "contracts\\tBLP.sol:43"
+          },
+          {
+            "contract": "tBLP",
+            "label": "accRewardsPerToken",
+            "type": "t_uint256",
+            "src": "contracts\\tBLP.sol:44"
+          },
+          {
+            "contract": "tBLP",
+            "label": "totalDeposited",
+            "type": "t_uint256",
+            "src": "contracts\\tBLP.sol:45"
+          }
+        ],
+        "types": {
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(UsdbLike)3858": {
+            "label": "contract UsdbLike"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_contract(IERC20Upgradeable)1432": {
+            "label": "contract IERC20Upgradeable"
+          },
+          "t_uint8": {
+            "label": "uint8"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_array(t_uint256)45_storage": {
+            "label": "uint256[45]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "2695123d9702ca1a27c7f94eafd6cf40d693572771469511b5648a4571dfe0d5": {
+      "address": "0xB697820ad863b4288693a09CC1Ae5b5A2463D781",
+      "txHash": "0x26705cab8220f8b2fc3439eaeea500f8519d62ceecebcf184bc064ba38e16018",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_uint8",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\proxy\\utils\\Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\proxy\\utils\\Initializable.sol:68"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\utils\\ContextUpgradeable.sol:40"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_balances",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:40"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_allowances",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:42"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_totalSupply",
+            "type": "t_uint256",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:44"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_name",
+            "type": "t_string_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:46"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "_symbol",
+            "type": "t_string_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:47"
+          },
+          {
+            "contract": "ERC20Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)45_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\ERC20Upgradeable.sol:376"
+          },
+          {
+            "contract": "ERC4626Upgradeable",
+            "label": "_asset",
+            "type": "t_contract(IERC20Upgradeable)1432",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\extensions\\ERC4626Upgradeable.sol:54"
+          },
+          {
+            "contract": "ERC4626Upgradeable",
+            "label": "_underlyingDecimals",
+            "type": "t_uint8",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\extensions\\ERC4626Upgradeable.sol:55"
+          },
+          {
+            "contract": "ERC4626Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "contracts\\openzeppelin-contracts-upgradeable\\lib\\openzeppelin-contracts\\contracts\\token\\ERC20\\extensions\\ERC4626Upgradeable.sol:267"
+          },
+          {
+            "contract": "sBLP",
+            "label": "wards",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\sBLP.sol:34"
+          },
+          {
+            "contract": "sBLP",
+            "label": "usdb",
+            "type": "t_contract(UsdbLike)3858",
+            "src": "contracts\\sBLP.sol:36"
+          },
+          {
+            "contract": "sBLP",
+            "label": "usdbTokenAddress",
+            "type": "t_address",
+            "src": "contracts\\sBLP.sol:37"
+          },
+          {
+            "contract": "sBLP",
+            "label": "pnlHandler",
+            "type": "t_address",
+            "src": "contracts\\sBLP.sol:38"
+          },
+          {
+            "contract": "sBLP",
+            "label": "shareToAssetsPrice",
+            "type": "t_uint256",
+            "src": "contracts\\sBLP.sol:41"
+          },
+          {
+            "contract": "sBLP",
+            "label": "accPnlPerTokenUsed",
+            "type": "t_int256",
+            "src": "contracts\\sBLP.sol:42"
+          },
+          {
+            "contract": "sBLP",
+            "label": "accPnlPerToken",
+            "type": "t_int256",
+            "src": "contracts\\sBLP.sol:43"
+          },
+          {
+            "contract": "sBLP",
+            "label": "accRewardsPerToken",
+            "type": "t_uint256",
+            "src": "contracts\\sBLP.sol:44"
+          },
+          {
+            "contract": "sBLP",
+            "label": "totalDeposited",
+            "type": "t_uint256",
+            "src": "contracts\\sBLP.sol:45"
+          }
+        ],
+        "types": {
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(UsdbLike)3858": {
+            "label": "contract UsdbLike"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_contract(IERC20Upgradeable)1432": {
+            "label": "contract IERC20Upgradeable"
+          },
+          "t_uint8": {
+            "label": "uint8"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_array(t_uint256)45_storage": {
+            "label": "uint256[45]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "2ba10cb5342cc36612d1617f56d0885dbdacbcdfd94a6090833446a85bf2760c": {
+      "address": "0xe31cAeB15eB2164B433f70958B0E2CA2527F23Cc",
+      "txHash": "0xb52be9af305bf3d02a2575b8dcc48790af13a5515efe724985a5af2d78046b72",
       "layout": {
         "solcVersion": "0.8.20",
         "storage": [

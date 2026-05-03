@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "contracts": {
+    "buzzingSwapPoolDeployer": "0x06dB8259d16b82f3cF436439856aE710be670896",
+    "buzzingSwapFactory": "0x50A5c7dB429D694E638C4Af4570d89f8fe051F0e",
+    "swapRouter": "0xDCcB9Ef18ab3f3E4342A11efBf1DD973182B5EAC",
+    "positionDescriptor": "0x735928574f0c7a38C029AfAf033B01F0893b3A0f",
+    "nonfungiblePositionManager": "0xc081d65798eBFdBF983D051232c828F6140bE333",
+    "buzzingInterfaceMulticall": "0x295F6EcfD4a7D2C5A09a7443b605EbD37Ad9987f",
+    "v3Migrator": "0x748796D464CB84E4f43DBDF2563aB630f5E4EF0C",
+    "tickLens": "0x7d5a78948e4e90e989E1F8BE1667eB6958EeD3e9",
+    "quoterV2": "0xc34Fc8E9F186974d110f243d62Bad0E805603474",
+    "wrapped1155Factory": "0xA4a217bD322ecA1E9B65f68D422AD3a441338844",
+    "ctf": "0x711da39F426330e7947B00Ac9B0bB30f298069a2",
+    "USDC": "0x7580C1AcF76CfcD49C0346b590daC0c4E09D5F73",
+    "USDB": "0x22dF8401148dE3367a6b3B5061Bff51eB8228E36",
+    "tBLPProxy": "0xAB5C19797Fe76dA9BEE7402bEb24539EEE1B2273",
+    "sBLPProxy": "0xa6f6676405C0381214114dFad49dc038D05628Ea",
+    "tradeManagerProxy": "0xD9123860FC05124bd0f033D04e57149bB637E766",
+    "feeAdapterProxy": "0x7DB62d5C59d2396D3d7e2FF43Bb4abd9B539DE93",
+    "dynamicFeeManager": "0x64fd680bACD8Df07d5A4d2a1e7fbc06A83BCc917",
+    "feeRebateDistributor": "0x5E8281bfD38108cc34F824bC725C3EDf4d3fB90a",
+    "contractFactory": "0xa12FFa0268F8Ae502a661cfcdA55B8ACA3f0C5F0",
+    "preTrading": "0xe39f628a8860E4C808929722A41Ff9a047AE599a",
+    "sUsds": "0xFD8396E7e0612A9A15C3900ee65C1fC802deC658"
+  },
+  "flags": {
+    "usdbPrefundDone": true,
+    "lpBootstrapDone": true,
+    "yieldBootstrapDone": true
+  },
+  "meta": {
+    "networkName": "basetestnet",
+    "chainId": 84532,
+    "deployEnv": "preview-sim",
+    "deployer": "0x44A9EdFC2B1B929645B0e0B88564F9069EBFf303",
+    "preTradingThresholdRaw": "1000000000"
+  },
+  "updatedAt": "2026-04-14T11:09:32.489Z"
+}
